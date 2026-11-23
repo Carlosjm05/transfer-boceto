@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personalizador en línea: diseña tu camiseta, buzo, gorra o mug · Tránsfer!</title>
+<meta name="description" content="Escribe tu frase, sube tu logo o tu foto y mira cómo queda en la prenda al instante. Envía el diseño por WhatsApp y te cotizamos sin compromiso.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CO">
+<meta property="og:site_name" content="Tránsfer!">
+<meta property="og:title" content="Diseña tu camiseta, buzo, gorra o mug en línea · Tránsfer!">
+<meta property="og:description" content="Escribe tu frase, sube tu logo o tu foto y mira cómo queda en la prenda al instante. Envía el diseño por WhatsApp y te cotizamos sin compromiso.">
+<meta property="og:image" content="../img/heroe-buzo-azul.webp">
+<meta name="theme-color" content="#053468">
+<link rel="icon" href="../recursos/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "index.html"}, {"@type": "ListItem", "position": 2, "name": "Personaliza", "item": "personaliza.html"}]}</script>
+<link rel="stylesheet" href="assets/sistema.css">
+<style>
+@font-face{font-family:'Anton';src:url(../../recursos/Anton-Regular.ttf) format('truetype');font-display:swap}
+.intro-p{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;padding-top:18px;padding-bottom:18px}
+.intro-p .h1{font-size:clamp(40px,5vw,72px);margin-top:10px}
+.intro-p .lead{max-width:520px}
+.garantias{list-style:none;display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px}
+.garantias li{display:flex;align-items:center;gap:7px;font-weight:800;font-size:13px;color:var(--tinta)}
+.garantias svg{width:14px;height:14px;color:var(--vino)}
+.editor{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr);gap:22px;align-items:start;padding-bottom:40px}
+.escenario-col{position:sticky;top:92px;background:#fff;border:var(--borde);border-radius:var(--r-panel);box-shadow:var(--sombra-g);padding:14px}
+.barra-esc{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.vistas{display:flex;gap:6px;background:var(--crema2);border:2px solid var(--tinta);border-radius:99px;padding:4px}
+.vistas button{border:0;border-radius:99px;padding:7px 16px;font-weight:800;font-size:13px;text-transform:uppercase;background:transparent;color:var(--tinta);cursor:pointer;display:flex;align-items:center;gap:6px}
+.vistas button.on{background:var(--azul);color:#fff}
+.vistas i{font-style:normal;background:var(--amarillo);color:var(--tinta);border-radius:99px;padding:0 7px;font-size:11px}
+.acc-esc{display:flex;gap:6px}
+.acc-esc button{border:2px solid var(--tinta);border-radius:99px;background:#fff;padding:7px 12px;font-weight:800;font-size:12.5px;cursor:pointer;color:var(--tinta)}
+.acc-esc button:disabled{opacity:.35;cursor:default}
+.acc-esc button[aria-pressed="true"]{background:var(--amarillo)}
+.escena-p{position:relative;width:100%;margin:0 auto;border-radius:18px;background:radial-gradient(circle at 50% 40%,#fff 0,#EDE6D6 75%);touch-action:none;user-select:none;overflow:hidden}
+.escena-p.soltando{outline:4px dashed var(--vino);outline-offset:-8px}
+.capa-p{position:absolute;inset:0;pointer-events:none}
+.capa-p svg{width:100%;height:100%;display:block}
+.capa-p.sombra{mix-blend-mode:multiply;z-index:3}
+.capa-p.brillo{mix-blend-mode:screen;z-index:4}
+.area{position:absolute;z-index:2}
+.area.guias{outline:2px dashed rgba(11,27,51,.35);outline-offset:0}
+.area-et{position:absolute;left:0;top:-22px;font-size:11px;font-weight:800;color:rgba(11,27,51,.55);white-space:nowrap;letter-spacing:.04em}
+.area:not(.guias) .area-et{display:none}
+.escena-p.oscura .area.guias{outline-color:rgba(255,255,255,.55)}
+.escena-p.oscura .area-et{color:rgba(255,255,255,.75)}
+.el{position:absolute;cursor:grab;line-height:0}
+.el:active{cursor:grabbing}
+.el canvas,.el img{width:100%;height:auto;display:block;pointer-events:none}
+.el.fuera{outline:2px solid #E3262F;outline-offset:2px}
+.capa-ui{position:absolute;z-index:5;pointer-events:none}
+.guia-v,.guia-h{position:absolute;background:var(--vino);opacity:0;transition:opacity .15s}
+.guia-v{left:50%;top:-6%;bottom:-6%;width:2px;transform:translateX(-1px)}
+.guia-h{top:50%;left:-6%;right:-6%;height:2px;transform:translateY(-1px)}
+.guia-v.ver,.guia-h.ver{opacity:1}
+.marco{position:absolute;border:2px solid var(--azul);border-radius:4px;box-shadow:0 0 0 1px #fff}
+.marco button{position:absolute;width:30px;height:30px;border-radius:50%;border:2px solid var(--tinta);background:#fff;color:var(--tinta);font-weight:900;font-size:15px;display:grid;place-items:center;pointer-events:auto;cursor:pointer;box-shadow:2px 2px 0 var(--tinta);touch-action:none}
+.h-borrar{left:-16px;top:-16px;background:#fff;color:#E3262F!important}
+.h-rot{left:50%;top:-44px;transform:translateX(-50%);cursor:grab!important}
+.h-tam{right:-16px;bottom:-16px;background:var(--amarillo)!important;cursor:nwse-resize!important}
+.estado-esc{font-size:13px;color:var(--suave);margin-top:10px;min-height:20px;text-align:center}
+.estado-esc .alerta{color:#C21D27}
+.panel-col{background:#fff;border:var(--borde);border-radius:var(--r-panel);box-shadow:var(--sombra-g);overflow:hidden}
+.pasos-p{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:var(--borde);background:var(--crema2);scroll-margin-top:100px}
+.pasos-p button{border:0;border-right:2px solid var(--tinta);background:transparent;padding:12px 6px;font-weight:800;font-size:12.5px;text-transform:uppercase;color:var(--tinta);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pasos-p button:last-child{border-right:0}
+.pasos-p b{width:26px;height:26px;border-radius:50%;border:2px solid var(--tinta);display:grid;place-items:center;background:#fff;font-size:12px}
+.pasos-p button.on{background:var(--amarillo)}
+.pasos-p button.on b{background:var(--azul);color:#fff}
+.hoja-p{display:none;padding:20px}
+.hoja-p.on{display:block;animation:entra-h .3s var(--ease)}
+@keyframes entra-h{from{opacity:0;transform:translateY(6px)}}
+.hoja-p h3{font-size:19px;font-weight:900;text-transform:uppercase;color:var(--tinta);margin:4px 0 12px}
+.hoja-p h3:not(:first-child){margin-top:22px}
+.et{display:block;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta);margin:14px 0 8px}
+.prods-p{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.prods-p button{border:2px solid var(--tinta);border-radius:16px;background:#fff;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:transform .2s var(--rebote)}
+.prods-p button:hover{transform:translateY(-2px)}
+.prods-p button.on{background:var(--amarillo);box-shadow:3px 3px 0 var(--tinta)}
+.ico-p{width:52px;height:52px;display:block}
+.ico-p svg{width:100%;height:100%}
+.prods-p b{font-size:11.5px;font-weight:900;text-transform:uppercase;color:var(--tinta);text-align:center;line-height:1.1}
+.prods-p small{font-size:10px;color:var(--suave);font-weight:700}
+.colores-p{display:flex;flex-wrap:wrap;gap:8px}
+.colores-p button,.tintas-p button{width:34px;height:34px;border-radius:50%;background:var(--c);border:2px solid var(--tinta);cursor:pointer;transition:transform .2s var(--rebote)}
+.colores-p button.on,.tintas-p button.on{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--tinta);transform:scale(1.05)}
+.tintas-p{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.tintas-p button{width:28px;height:28px}
+.tintas-p input[type=color]{width:34px;height:30px;border:2px solid var(--tinta);border-radius:8px;padding:0;background:#fff;cursor:pointer}
+.info-tec{font-size:13.5px;background:var(--crema);border:2px dashed rgba(11,27,51,.3);border-radius:14px;padding:10px 12px;margin-top:14px}
+.siguiente{display:flex;justify-content:flex-end;margin-top:20px;gap:10px;flex-wrap:wrap}
+.agregar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.agregar button{border:2px solid var(--tinta);border-radius:16px;background:#fff;padding:12px 6px;font-weight:800;font-size:12px;text-transform:uppercase;color:var(--tinta);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:2px 2px 0 var(--tinta);transition:transform .2s var(--rebote),background .2s}
+.agregar button:hover{background:var(--amarillo);transform:translate(-1px,-2px)}
+.agregar svg{width:26px;height:26px}
+.stickers-p[hidden],.plantillas-p[hidden],.borde-op[hidden]{display:none!important}
+.stickers-p{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.stickers-p button{border:2px solid var(--tinta);border-radius:12px;background:var(--crema);padding:6px;cursor:pointer;aspect-ratio:1}
+.stickers-p img{width:100%;height:100%;object-fit:contain}
+.plantillas-p{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.plantillas-p button{border:2px solid var(--tinta);border-radius:14px;background:var(--crema);padding:10px 12px;text-align:left;cursor:pointer}
+.plantillas-p button:hover{background:var(--amarillo)}
+.plantillas-p b{display:block;font-size:13.5px;font-weight:900;color:var(--tinta);text-transform:uppercase}
+.plantillas-p small{font-size:12px;color:var(--suave)}
+.editor-el{margin-top:16px;border-top:2px dashed rgba(11,27,51,.2);padding-top:6px}
+.editor-el textarea,.hoja-p textarea,.hoja-p input:not([type]),.hoja-p input[type=text],.hoja-p input[type=number],.hoja-p select{width:100%;border:2px solid var(--tinta);border-radius:12px;padding:9px 12px;font:inherit;font-size:15px;color:var(--tinta);background:#fff}
+.editor-el textarea{font-weight:800;resize:vertical}
+.fuentes{display:flex;flex-wrap:wrap;gap:6px}
+.fuentes button{border:2px solid var(--tinta);border-radius:99px;background:#fff;padding:6px 12px;font-size:14px;cursor:pointer;color:var(--tinta)}
+.fuentes button.on{background:var(--azul);color:#fff}
+.check{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;color:var(--tinta);margin-top:12px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--azul)}
+.fila-r{display:grid;grid-template-columns:62px 1fr 44px;gap:10px;align-items:center;margin-top:12px}
+.fila-r label{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta)}
+.fila-r input[type=range]{width:100%;accent-color:var(--vino)}
+.fila-r span{font-size:12.5px;font-weight:700;text-align:right}
+.medida{margin-top:12px;font-size:13.5px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.calidad{border-radius:99px;padding:3px 10px;font-size:12px;font-weight:800;border:2px solid var(--tinta)}
+.calidad.ok{background:#CFF5DD}.calidad.med{background:#FFE9A8}.calidad.mal{background:#FFC9CF}
+.acciones-el{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center}
+.acciones-el button{border:2px solid var(--tinta);border-radius:99px;background:#fff;padding:6px 12px;font-weight:800;font-size:12px;cursor:pointer;color:var(--tinta)}
+.acciones-el button:hover{background:var(--amarillo)}
+.acciones-el .peligro{color:#C21D27}
+.acciones-el .check{margin-top:0}
+.vacio-el{font-size:13.5px;color:var(--suave);padding:10px 0}
+.archivo-el{font-size:13.5px;word-break:break-all}
+.capas-p{display:grid;gap:6px}
+.capas-p button{display:flex;align-items:center;gap:10px;border:2px solid var(--tinta);border-radius:12px;background:#fff;padding:6px 10px;font-weight:700;font-size:13px;text-align:left;cursor:pointer;color:var(--tinta);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.capas-p button.on{background:var(--amarillo)}
+.mini-c{flex:none;width:30px;height:30px;border-radius:8px;border:2px solid var(--tinta);display:grid;place-items:center;font-weight:900;background:var(--crema)}
+.mini-c img{width:100%;height:100%;object-fit:contain}
+.modos{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--tinta);border-radius:99px;overflow:hidden}
+.modos button{border:0;background:#fff;padding:10px;font-weight:800;font-size:12.5px;text-transform:uppercase;cursor:pointer;color:var(--tinta)}
+.modos button.on{background:var(--azul);color:#fff}
+.tallas-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.tallas-g>div{border:2px solid var(--tinta);border-radius:14px;padding:8px;text-align:center}
+.tallas-g b{display:block;font-weight:900;margin-bottom:6px;color:var(--tinta)}
+.paso-n{display:flex;align-items:center;justify-content:center;gap:4px}
+.paso-n button{width:30px;height:30px;border-radius:50%;border:2px solid var(--tinta);background:#fff;font-weight:900;cursor:pointer;flex:none}
+.paso-n input{width:52px!important;text-align:center;padding:6px!important;font-weight:800}
+.ayuda-p{font-size:13.5px;margin:12px 0 8px}
+.nombres-t{display:grid;gap:6px;max-height:320px;overflow:auto;padding-right:4px}
+.fila-n{display:grid;grid-template-columns:24px 1fr 76px 30px;gap:6px;align-items:center}
+.fila-n span{font-size:12px;font-weight:800;color:var(--suave);text-align:right}
+.fila-n button{width:30px;height:30px;border-radius:50%;border:2px solid var(--tinta);background:#fff;cursor:pointer;font-weight:900;color:#C21D27}
+.total-u{margin-top:16px;font-weight:900;font-size:18px;color:var(--tinta);text-transform:uppercase}
+.codigo-r{display:inline-block;background:var(--azul);color:var(--amarillo);border-radius:99px;padding:4px 12px;font-weight:900;letter-spacing:.06em;font-size:14px}
+.mocks-r{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
+.mocks-r figure{border:2px solid var(--tinta);border-radius:14px;background:var(--crema);padding:6px;text-align:center}
+.mocks-r img{width:100%;height:auto}
+.mocks-r figcaption{font-size:11.5px;font-weight:800;text-transform:uppercase;color:var(--tinta)}
+.spec-r{list-style:none;display:grid;gap:8px;margin-top:14px;font-size:13.5px}
+.spec-r>li{border-left:4px solid var(--amarillo);padding-left:10px}
+.spec-r b{display:block;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--vino)}
+.spec-r ol{padding-left:18px}
+.spec-r .alerta{border-color:#E3262F;color:#C21D27;font-weight:700}
+.filas-c{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.botones-r{display:grid;gap:10px;margin-top:16px}
+.botones-r .btn{justify-content:space-between}
+.btn.verde{background:#25D366;color:#fff}
+.btn:disabled{opacity:.45;pointer-events:none}
+.sec-r{display:flex;flex-wrap:wrap;gap:8px}
+.sec-r button{border:2px solid var(--tinta);border-radius:99px;background:#fff;padding:8px 14px;font-weight:800;font-size:12.5px;cursor:pointer;color:var(--tinta)}
+.sec-r button:hover{background:var(--amarillo)}
+.nota-r{font-size:12.5px;color:var(--suave);margin-top:10px}
+.aviso-p{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);z-index:130;background:var(--tinta);color:#fff;border-radius:99px;padding:12px 20px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.3s var(--rebote);max-width:min(92vw,560px);text-align:center;box-shadow:4px 4px 0 var(--amarillo)}
+.aviso-p.ver{opacity:1;transform:translate(-50%,0)}
+.dlg-dis{border:var(--borde);border-radius:var(--r-panel);padding:22px;width:min(560px,92vw);box-shadow:var(--sombra-g)}
+.dlg-dis::backdrop{background:rgba(11,27,51,.5)}
+.dlg-dis h2{font-weight:900;text-transform:uppercase;color:var(--tinta);margin-bottom:12px}
+.dis{display:grid;grid-template-columns:60px 1fr auto auto;gap:10px;align-items:center;border:2px solid var(--tinta);border-radius:14px;padding:8px;margin-bottom:8px}
+.dis img{width:60px;height:60px;object-fit:contain;background:var(--crema);border-radius:8px}
+.dis small{display:block;color:var(--suave)}
+.btn-mini{border:2px solid var(--tinta);border-radius:99px;background:var(--azul);color:#fff;padding:6px 12px;font-weight:800;font-size:12px;cursor:pointer}
+.quitar-d{width:30px;height:30px;border-radius:50%;border:2px solid var(--tinta);background:#fff;cursor:pointer;color:#C21D27;font-weight:900}
+@media (max-width:1080px){.editor{grid-template-columns:1fr}.escenario-col{position:sticky;top:6px;z-index:40;padding:8px 10px}.barra-esc{margin-bottom:6px}.area-et .largo{display:none}.area-et{font-size:10px;top:-17px}.estado-esc{font-size:12px;margin-top:6px;display:none}.estado-esc:has(.alerta){display:block}.escena-p{border-radius:14px}}
+@media (max-width:640px){.prods-p{grid-template-columns:repeat(5,1fr);gap:5px}.ico-p{width:40px;height:40px}.prods-p b{font-size:9.5px}.prods-p small{display:none}.agregar{grid-template-columns:repeat(4,1fr)}.agregar button{font-size:10px;padding:10px 2px}.plantillas-p{grid-template-columns:1fr}.filas-c{grid-template-columns:1fr}.hoja-p{padding:16px}.acc-esc button{padding:6px 9px;font-size:11.5px}.escenario-col{padding:10px}}
+</style>
+</head>
+<body data-pagina="personaliza" class="cargando">
+<main>
+<section class="env intro-p">
+  <div>
+    <div class="migas"><a href="index.html">Inicio</a>/<span>Personaliza</span></div>
+    <h1 class="h1" data-palabras>Personaliza <span class="pegada">en línea</span></h1>
+  </div>
+  <div>
+    <p class="lead">Diseña tu camiseta, buzo, gorra, mug o termo: textos, tu logo, fotos y stickers. Lo ves puesto al instante y nos llega con todas las medidas.</p>
+    <ul class="garantias"><li><svg><use href="#estrella"/></svg>Frente y espalda</li><li><svg><use href="#estrella"/></svg>Medidas en centímetros</li><li><svg><use href="#estrella"/></svg>Un nombre por prenda</li><li><svg><use href="#estrella"/></svg>Ficha para el taller</li></ul>
+  </div>
+</section>
+
+<section class="env editor" aria-label="Personalizador">
+  <div class="escenario-col">
+    <div class="barra-esc">
+      <div class="vistas" id="vistas" role="tablist" aria-label="Vista de la prenda"></div>
+      <div class="acc-esc"><button type="button" id="deshacer" title="Deshacer (Ctrl+Z)" aria-label="Deshacer">↶ Deshacer</button><button type="button" id="rehacer" title="Rehacer (Ctrl+Y)" aria-label="Rehacer">↷</button><button type="button" id="guias-btn" aria-pressed="true" title="Mostrar el área de impresión">Guías</button><button type="button" id="mis-dis">Mis diseños</button></div>
+    </div>
+    <div class="escena-p" id="escena" aria-label="Vista previa del diseño. Arrastra los elementos para moverlos."></div>
+    <p class="estado-esc" id="estado-esc"></p>
+  </div>
+
+  <div class="panel-col">
+    <nav class="pasos-p" id="pasos-p" aria-label="Pasos"><button type="button" data-paso="1" class="on"><b>1</b>Producto</button><button type="button" data-paso="2"><b>2</b>Diseño</button><button type="button" data-paso="3"><b>3</b>Tallas</button><button type="button" data-paso="4"><b>4</b>Enviar</button></nav>
+
+    <div class="hoja-p on" data-paso="1">
+      <h3>¿Qué vas a personalizar?</h3>
+      <div class="prods-p" id="prods-p"></div>
+      <h3>Color: <span id="color-nombre" style="color:var(--vino)"></span></h3>
+      <div class="colores-p" id="colores-p"></div>
+      <p class="info-tec" id="info-tec"></p>
+      <div class="siguiente"><button type="button" class="btn" data-ir="2">Siguiente: tu diseño <i>→</i></button></div>
+    </div>
+
+    <div class="hoja-p" data-paso="2">
+      <h3>Agrega a tu diseño</h3>
+      <div class="agregar">
+        <button type="button" id="add-texto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 6h14M12 6v13M9 19h6"/></svg>Texto</button>
+        <button type="button" id="add-img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/></svg>Imagen o logo</button>
+        <button type="button" id="add-sticker"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c.7 5.4 4.6 9.3 10 10-5.4.7-9.3 4.6-10 10-.7-5.4-4.6-9.3-10-10 5.4-.7 9.3-4.6 10-10z"/></svg>Sticker</button>
+        <button type="button" id="add-plantilla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>Plantillas</button>
+      </div>
+      <input type="file" id="archivo-p" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+      <div class="stickers-p" id="stickers-p" hidden></div>
+      <div class="plantillas-p" id="plantillas-p" hidden></div>
+      <p class="nota-r">También puedes arrastrar tu imagen sobre la prenda. Formatos: PNG (mejor sin fondo), JPG, WEBP o SVG.</p>
+      <div class="editor-el" id="editor-el"></div>
+      <h3>Capas de esta vista</h3>
+      <div class="capas-p" id="capas-p"></div>
+      <div class="siguiente"><button type="button" class="btn blanco" data-ir="1">← Producto</button><button type="button" class="btn" data-ir="3">Siguiente: tallas <i>→</i></button></div>
+    </div>
+
+    <div class="hoja-p" data-paso="3">
+      <h3>¿Cuántas y de qué talla?</h3>
+      <div id="tallas-c"></div>
+      <p class="total-u">Total: <span id="total-u"></span></p>
+      <div class="siguiente"><button type="button" class="btn blanco" data-ir="2">← Diseño</button><button type="button" class="btn" data-ir="4">Siguiente: revisar <i>→</i></button></div>
+    </div>
+
+    <div class="hoja-p" data-paso="4">
+      <h3>Revisa tu diseño <span class="codigo-r" id="codigo-p"></span></h3>
+      <div class="mocks-r" id="mocks-r"></div>
+      <ul class="spec-r" id="spec-r"></ul>
+      <label class="et" for="notas-p">¿Algo más que debamos saber?</label>
+      <textarea id="notas-p" rows="3" placeholder="Ej.: el logo debe verse más pequeño, lo necesito para el 15 de diciembre…"></textarea>
+      <div class="filas-c"><div><label class="et" for="cliente-p">Tu nombre (opcional)</label><input id="cliente-p" autocomplete="name"></div><div><label class="et" for="ciudad-p">Ciudad de envío (opcional)</label><input id="ciudad-p" autocomplete="address-level2"></div></div>
+      <div class="botones-r">
+        <button type="button" class="btn verde" id="enviar-p">Enviar por WhatsApp con la ficha <i>→</i></button>
+        <button type="button" class="btn amarillo" id="agregar-p">Agregar al pedido <i>+</i></button>
+      </div>
+      <div class="sec-r" style="margin-top:12px"><button type="button" id="descargar-p">Descargar ficha (PNG)</button><button type="button" id="guardar-p">Guardar diseño</button><button type="button" id="enlace-p">Copiar enlace</button></div>
+      <p class="nota-r">En el celular, «Enviar por WhatsApp» comparte la ficha y tus imágenes de una vez. En computador se descarga la ficha y se abre el chat con el mensaje listo: solo adjúntala. Las medidas y colores se confirman antes de producir.</p>
+      <div class="siguiente"><button type="button" class="btn blanco" data-ir="3">← Tallas</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="franja vino"><div class="pista"><span>Texto</span><span>Logo</span><span>Foto</span><span>Stickers</span><span>Frente</span><span>Espalda</span><span>Texto</span><span>Logo</span><span>Foto</span><span>Stickers</span><span>Frente</span><span>Espalda</span></div></div>
+
+<section class="seccion">
+  <div class="env">
+    <div class="cab-seccion"><div><span class="etiqueta" data-revela><svg><use href="#estrella"/></svg>Consejos</span><h2 class="h2" data-palabras>Para que quede <span class="pegada cian">perfecto</span></h2></div></div>
+    <div class="pasos">
+      <div class="paso" data-revela style="--d:0"><div class="num">1</div><h4>Buena resolución</h4><p>Fíjate en el aviso de calidad: verde es perfecto. Si sale rojo, usa una imagen más grande o redúcela.</p></div>
+      <div class="paso" data-revela style="--d:1"><div class="num">2</div><h4>Fondo transparente</h4><p>Un PNG sin fondo queda más limpio. Si tu logo tiene fondo blanco, usa «Quitar fondo blanco».</p></div>
+      <div class="paso" data-revela style="--d:2"><div class="num">3</div><h4>Contraste</h4><p>Tinta clara en prendas oscuras y tinta oscura en prendas claras. El contorno ayuda a que se lea.</p></div>
+      <div class="paso" data-revela style="--d:3"><div class="num">4</div><h4>Envía la ficha</h4><p>Con la ficha y tus archivos originales sabemos exactamente qué estampar, dónde y de qué tamaño.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<dialog class="dlg-dis" id="dlg-disenos" aria-label="Mis diseños"><h2>Mis diseños</h2><div id="lista-dis"></div><div class="siguiente"><button type="button" class="btn blanco" data-cerrar-dlg>Cerrar</button></div></dialog>
+<div class="aviso-p" id="aviso-p" role="status" aria-live="polite"></div>
+<script src="assets/sitio.js"></script>
+<script src="assets/personalizador.js"></script>
+</body>
+</html>
