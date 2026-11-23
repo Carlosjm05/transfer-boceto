@@ -532,6 +532,6 @@
   if (!vistaDe(S.prod, S.vista)) S.vista = 'frente';
   todo(); guardarHist();
   // repinta los textos cuando terminen de cargar las letras
-  Promise.all(['900 40px Rubik', '500 40px Rubik', '300 40px Rubik', '400 40px Anton'].map(f => document.fonts.load(f))).then(() => { renderCapas(); });
+  Promise.all(['900 40px Rubik', '500 40px Rubik', '300 40px Rubik', '400 40px Anton'].map(f => document.fonts.load(f))).catch(() => {}).finally(() => { renderCapas(); });
   window.PERSONALIZADOR = {S, ficha, textoWA, canvasFicha, renderMockup};
 })();

@@ -80,5 +80,5 @@
 
   new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(vit);
   pintar(); cambiarPalabra(S.prod);
-  document.fonts.load('900 40px Rubik').then(() => { demo('buzo'); if (!reducido) ciclo = setInterval(siguiente, 4600); });
+  document.fonts.load('900 40px Rubik').catch(() => {}).then(() => { demo('buzo'); if (!reducido) ciclo = setInterval(siguiente, 4600); });
 })();
