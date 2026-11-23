@@ -43,16 +43,16 @@
   let pasoId = 0;
   const espera = ms => new Promise(r => setTimeout(r, ms));
   async function demo(p, color) {
-    const id = ++pasoId;
+    const id = ++pasoId; vit.classList.remove('editando');
     prenda.classList.remove('entra'); prenda.classList.add('sale'); await espera(reducido ? 0 : 240); if (id !== pasoId) return;
     S.prod = p; S.color = color || COLOR_DEMO[p]; pintar(); cambiarPalabra(p);
     prenda.classList.remove('sale'); prenda.classList.add('entra');
     $('.sello-listo').classList.remove('ver');
     const t = nombre();
     if (reducido) { ajustarTexto(t); $('.v-sticker').classList.add('ver'); return; }
-    $('.v-texto').classList.add('escribiendo');
+    $('.v-texto').classList.add('escribiendo'); vit.classList.add('editando');
     for (let i = 1; i <= t.length; i++) { ajustarTexto(t.slice(0, i)); await espera(85); if (id !== pasoId) return; }
-    $('.v-texto').classList.remove('escribiendo');
+    $('.v-texto').classList.remove('escribiendo'); vit.classList.remove('editando');
     await espera(250); if (id !== pasoId) return;
     $('.v-sticker').classList.add('ver');
     await espera(420); if (id !== pasoId) return;
@@ -66,12 +66,12 @@
   $('#v-prods').innerHTML = ORDEN.map(p => `<button type="button" data-p="${p}" aria-label="${PRENDAS[p].nombre}" title="${PRENDAS[p].nombre}"><span>${svgDe(p, 'frente', 'base', '#E6E0D2')}</span><b>${PRENDAS[p].corto || PRENDAS[p].nombre}</b></button>`).join('');
   $('#v-prods').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pausar(); demo(b.dataset.p); });
   $('#v-colores').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; pausar(); demo(S.prod, b.dataset.c); });
-  entrada.addEventListener('input', () => { pausar(); ++pasoId; ajustarTexto(nombre()); $('.v-texto').classList.remove('escribiendo'); $('.v-sticker')?.classList.add('ver'); });
-  $('#prueba-h').addEventListener('submit', e => {
-    e.preventDefault();
-    const q = new URLSearchParams({producto: S.prod, color: S.color}); if (entrada.value.trim()) q.set('texto', entrada.value.trim());
-    location.href = 'personaliza.html?' + q.toString();
-  });
+  entrada.addEventListener('input', () => { pausar(); ++pasoId; ajustarTexto(nombre()); $('.v-texto').classList.remove('escribiendo'); $('.v-sticker')?.classList.add('ver'); vit.classList.add('editando'); });
+  entrada.addEventListener('blur', () => vit.classList.remove('editando'));
+  // El formulario y "Empezar mi diseño" abren el personalizador con lo que el visitante dejó escogido
+  const urlEditor = () => { const q = new URLSearchParams({producto: S.prod, color: S.color}); if (entrada.value.trim()) q.set('texto', entrada.value.trim()); return 'personaliza.html?' + q.toString(); };
+  $('#prueba-h').addEventListener('submit', e => { e.preventDefault(); location.href = urlEditor(); });
+  const ir = $('#ir-h'); if (ir) ir.addEventListener('click', () => { ir.href = urlEditor(); });
   addEventListener('resize', () => ajustarTexto($('.v-texto')?.textContent || nombre()));
 
   // Días para Navidad en el acceso de temporada

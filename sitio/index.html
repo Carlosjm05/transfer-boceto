@@ -251,70 +251,83 @@
   .cierre .h1{font-size:38px}
 }
 
-/* ───── Héroe v2: demostración en vivo (22 nov 2026) ───── */
-.heroe2{padding:14px 0 18px;position:relative;overflow:hidden}
-.heroe2-g{display:grid;grid-template-columns:1fr 1.02fr;grid-template-areas:"txt esc" "form esc";column-gap:40px;row-gap:14px;align-items:center}
-.h2-txt{grid-area:txt;align-self:end}.h2-esc{grid-area:esc}.h2-form{grid-area:form;align-self:start}
-.titular{font-size:clamp(44px,5.4vw,88px);line-height:.94;margin-top:18px;letter-spacing:-.02em}
-.rota{display:block;width:max-content;white-space:nowrap;margin-top:.04em}
+/* ───── Héroe v3: editor en una tarjeta, más compacto y limpio (22 nov 2026) ───── */
+.heroe2{padding:26px 0 22px;position:relative}
+.heroe2-g{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);grid-template-areas:"txt esc" "cta esc";column-gap:56px;row-gap:0;align-items:center}
+.heroe2-g>*{min-width:0}.h2-txt{grid-area:txt;align-self:end}.h2-esc{grid-area:esc}.h2-cta{grid-area:cta;align-self:start}
+.titular{font-size:clamp(42px,4.7vw,74px);line-height:.95;margin-top:18px;letter-spacing:-.02em}
+.titular .pegada{-webkit-text-stroke-width:3px;text-shadow:5px 5px 0 var(--tinta)}
+.rota{display:block;width:max-content;white-space:nowrap;margin-top:.06em}
 .rota.cambia{animation:rota-p .55s var(--rebote)}
 @keyframes rota-p{0%{transform:translateY(45%) rotate(-5deg);opacity:0}100%{transform:none;opacity:1}}
-.h2-txt .lead{max-width:520px;margin-top:20px}
-.prueba label{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--vino);margin-bottom:8px}
-.campo-h{display:flex;gap:8px;align-items:center;background:#fff;border:var(--borde);border-radius:99px;padding:6px;box-shadow:var(--sombra);max-width:540px}
-.campo-h input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:19px;font-weight:900;text-transform:uppercase;color:var(--tinta);padding:0 8px 0 16px;letter-spacing:.02em}
-.campo-h input::placeholder{color:#b9b2a2}
-.campo-h .btn{flex:none}
-.h2-form .acciones-cab{margin-top:16px}
-.vitrina{position:relative;aspect-ratio:1/1;width:min(100%,600px,max(320px,calc(100svh - 300px)));margin:0 auto}
-.v-fondo{position:absolute;inset:4%;width:92%;height:92%}
-.v-anillo{position:absolute;inset:0;width:100%;height:100%;animation:gira-a 40s linear infinite}
-@keyframes gira-a{to{transform:rotate(360deg)}}
-.v-prenda{position:absolute;left:50%;top:50%;width:78%;transform:translate(-50%,-50%);filter:drop-shadow(8px 10px 0 rgba(11,27,51,.85))}
+.h2-txt .lead{max-width:500px;margin-top:18px}
+.h2-cta .acciones-cab{margin-top:24px}
+.h2-garantias{list-style:none;display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;font-weight:800;font-size:13px;color:var(--tinta)}
+.h2-garantias li{display:flex;align-items:center;gap:7px}.h2-garantias svg{width:14px;height:14px;color:var(--vino);flex:none}
+.solo-lector{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* La tarjeta del editor */
+.editor-h{background:#fff;border:var(--borde);border-radius:var(--r-panel);box-shadow:var(--sombra-g);overflow:hidden;max-width:560px;margin-left:auto}
+.eh-barra{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 14px;border-bottom:var(--borde)}
+.v-prods{display:flex;gap:6px;flex-wrap:wrap}
+.v-prods button{display:flex;align-items:center;gap:5px;border:2px solid var(--tinta);border-radius:99px;background:#fff;padding:3px 10px 3px 4px;cursor:pointer;font:inherit;color:var(--tinta);transition:background .2s,transform .2s var(--rebote)}
+.v-prods button:hover{transform:translateY(-2px)}.v-prods button.on{background:var(--amarillo)}
+.v-prods span{width:26px;height:26px;display:block}.v-prods span svg{width:100%;height:100%;display:block}
+.v-prods b{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.03em}
+.eh-vivo{position:absolute;left:12px;top:12px;z-index:3;background:#fff;border:2px solid var(--tinta);border-radius:99px;padding:4px 10px;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--suave);white-space:nowrap}
+.eh-vivo i{width:8px;height:8px;border-radius:50%;background:#1F9D55;box-shadow:0 0 0 0 rgba(31,157,85,.5);animation:pulso-v 1.8s infinite}
+@keyframes pulso-v{70%{box-shadow:0 0 0 7px rgba(31,157,85,0)}100%{box-shadow:0 0 0 0 rgba(31,157,85,0)}}
+.vitrina{position:relative;height:clamp(250px,calc(100svh - 480px),370px);background:var(--crema) radial-gradient(rgba(11,27,51,.13) 1.2px,transparent 1.5px) 0 0/18px 18px;overflow:hidden}
+.vitrina::before{content:"";position:absolute;left:50%;top:52%;height:84%;aspect-ratio:1;border-radius:50%;background:var(--cian-s);transform:translate(-50%,-50%);opacity:.75}
+.v-prenda{position:absolute;left:50%;top:51%;height:86%;transform:translate(-50%,-50%);filter:drop-shadow(5px 7px 0 rgba(11,27,51,.22))}
 .v-prenda.sale{animation:v-sale .24s ease-in forwards}.v-prenda.entra{animation:v-entra .5s var(--rebote)}
-@keyframes v-sale{to{transform:translate(-50%,-50%) scale(.8) rotate(-8deg);opacity:0}}
-@keyframes v-entra{from{transform:translate(-50%,-50%) scale(.8) rotate(8deg);opacity:0}}
+@keyframes v-sale{to{transform:translate(-50%,-50%) scale(.85) rotate(-6deg);opacity:0}}
+@keyframes v-entra{from{transform:translate(-50%,-50%) scale(.85) rotate(6deg);opacity:0}}
 .vitrina.estampa .v-prenda{animation:v-estampa .45s var(--rebote)}
 @keyframes v-estampa{35%{transform:translate(-50%,-50%) scale(.965)}70%{transform:translate(-50%,-50%) scale(1.02)}}
 .v-capa{position:absolute;inset:0;pointer-events:none}.v-capa svg{width:100%;height:100%;display:block}
 .v-sombra{mix-blend-mode:multiply}.v-brillo{mix-blend-mode:screen}
 .v-area{position:absolute}
+.v-area::before{content:"";position:absolute;inset:-5%;border:2px dashed rgba(11,27,51,.5);border-radius:6px;opacity:0;transition:opacity .3s}
+.vitrina.editando .v-area::before{opacity:1}
 .v-texto{position:absolute;left:50%;top:26%;transform:translate(-50%,-50%);white-space:nowrap;font-weight:900;line-height:1;letter-spacing:.01em}
 .v-texto.escribiendo::after{content:"";display:inline-block;width:.08em;height:.85em;margin-left:.06em;background:currentColor;vertical-align:-.05em;animation:cursor .7s steps(1) infinite}
 @keyframes cursor{50%{opacity:0}}
 .v-sticker{position:absolute;left:50%;top:66%;width:46%;transform:translate(-50%,-50%) scale(0);transition:transform .5s var(--rebote)}
 .v-sticker.ver{transform:translate(-50%,-50%) scale(1) rotate(-6deg)}
-.sello-listo{position:absolute;right:7%;top:9%;z-index:5;background:var(--vino);color:#fff;border:var(--borde);border-radius:99px;padding:10px 18px;font-weight:900;font-size:clamp(15px,1.6vw,22px);text-transform:uppercase;box-shadow:var(--sombra);transform:rotate(12deg) scale(0);transition:transform .45s var(--rebote)}
-.sello-listo.ver{transform:rotate(12deg) scale(1)}
-.chip-f{position:absolute;z-index:4;display:flex;align-items:center;gap:7px;background:#fff;border:var(--borde);border-radius:99px;padding:8px 14px;font-weight:800;font-size:13px;color:var(--tinta);box-shadow:var(--sombra);white-space:nowrap;animation:flota-c 4.5s ease-in-out infinite}
-.chip-f svg{width:14px;height:14px;color:var(--vino)}
-.chip-f.c1{left:-2%;top:18%}.chip-f.c2{right:-3%;top:36%;animation-delay:-1.2s}.chip-f.c3{left:0;bottom:22%;animation-delay:-2.4s}.chip-f.c4{right:2%;bottom:6%;animation-delay:-3.4s}
-@keyframes flota-c{50%{transform:translateY(-8px)}}
-.v-controles{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:6px}
-.v-prods{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.v-prods button{display:flex;flex-direction:column;align-items:center;gap:2px;width:72px;border:2px solid var(--tinta);border-radius:16px;background:#fff;padding:6px 4px;cursor:pointer;box-shadow:2px 2px 0 var(--tinta);transition:transform .2s var(--rebote),background .2s}
-.v-prods button:hover{transform:translateY(-2px)}.v-prods button.on{background:var(--amarillo)}
-.v-prods span{width:38px;height:38px;display:block}.v-prods span svg{width:100%;height:100%}
-.v-prods b{font-size:10.5px;font-weight:900;text-transform:uppercase;color:var(--tinta)}
-.v-colores{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
-.v-colores button{width:26px;height:26px;border-radius:50%;background:var(--c);border:2px solid var(--tinta);cursor:pointer}
-.v-colores button.on{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--tinta)}
-.v-tec{font-size:12.5px;font-weight:700;color:var(--suave)}
-.accesos-s{padding:4px 0 26px}
-.accesos{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.acceso{display:flex;align-items:center;gap:12px;border:var(--borde);border-radius:22px;padding:14px 16px;box-shadow:var(--sombra);color:var(--tinta);transition:transform .25s var(--rebote),box-shadow .25s}
-.acceso:hover{transform:translate(-3px,-3px);box-shadow:8px 8px 0 var(--tinta)}
-.acceso>svg{width:52px;height:50px;flex:none;transition:transform .35s var(--rebote)}
-.acceso:hover>svg{transform:rotate(-8deg) scale(1.08)}
+.sello-listo{position:absolute;right:5%;top:7%;z-index:5;background:var(--vino);color:#fff;border:var(--borde);border-radius:99px;padding:6px 14px;font-weight:900;font-size:14px;letter-spacing:.04em;text-transform:uppercase;box-shadow:3px 3px 0 var(--tinta);transform:rotate(10deg) scale(0);transition:transform .45s var(--rebote)}
+.sello-listo.ver{transform:rotate(10deg) scale(1)}
+.eh-pie{display:grid;gap:10px;padding:12px 14px 14px;border-top:var(--borde)}
+.eh-fila{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap}
+.v-colores{display:flex;gap:6px;flex-wrap:wrap}
+.v-colores button{width:22px;height:22px;border-radius:50%;background:var(--c);border:2px solid var(--tinta);cursor:pointer;transition:transform .2s var(--rebote)}
+.v-colores button:hover{transform:scale(1.15)}
+.v-colores button.on{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--tinta)}
+.v-tec{font-size:12px;font-weight:700;color:var(--suave)}
+.campo-h{display:flex;gap:8px;align-items:center;background:var(--crema);border:2px solid var(--tinta);border-radius:99px;padding:5px}
+.campo-h input{flex:1;min-width:0;width:0;border:0;outline:0;background:transparent;font:inherit;font-size:17px;font-weight:900;text-transform:uppercase;color:var(--tinta);padding:0 8px 0 14px;letter-spacing:.02em}
+.campo-h input::placeholder{color:#a9a191}
+.campo-h:focus-within{box-shadow:0 0 0 3px var(--cian-s)}
+.campo-h .btn{flex:none;box-shadow:none;padding:5px 5px 5px 18px}.campo-h .btn i{width:32px;height:32px}
+/* Accesos: discretos, en blanco, con el color solo en el ícono */
+.accesos-s{padding:4px 0 30px}
+.accesos{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.accesos .acceso{display:flex;align-items:center;gap:12px;background:#fff;color:var(--tinta);border:var(--borde);border-radius:18px;padding:10px 12px;box-shadow:3px 3px 0 var(--tinta);transition:transform .25s var(--rebote),box-shadow .25s}
+.accesos .acceso:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--tinta)}
+.acceso>svg{width:46px;height:46px;flex:none;padding:6px;border:2px solid var(--tinta);border-radius:13px;background:var(--k,var(--amarillo-s));transition:transform .35s var(--rebote)}
+.acceso:hover>svg{transform:rotate(-6deg)}
+.acceso.t-amarillo{--k:var(--amarillo-s)}.acceso.t-cian{--k:var(--cian-s)}.acceso.a-azul{--k:var(--crema2)}.acceso.a-vino{--k:var(--amarillo-s)}
 .acceso span{flex:1;min-width:0}
-.acceso b{display:block;font-weight:900;font-size:16px;text-transform:uppercase;line-height:1.1}
-.acceso small{display:block;font-size:12.5px;line-height:1.35;margin-top:3px;opacity:.85}
-.acceso i{font-style:normal;font-weight:900;width:34px;height:34px;flex:none;border-radius:50%;background:#fff;border:2px solid var(--tinta);display:grid;place-items:center;color:var(--tinta)}
-.acceso.a-azul{background:var(--azul);color:#fff}.acceso.a-vino{background:var(--vino);color:#fff}
-@media (max-width:1080px){.heroe2-g{grid-template-columns:1fr;grid-template-areas:"txt" "esc" "form"}.h2-txt,.h2-form{align-self:auto}.vitrina{width:min(100%,520px)}.accesos{grid-template-columns:1fr 1fr}}
-@media (max-width:640px){.titular{font-size:clamp(40px,12.4vw,58px)}.chip-f{font-size:11px;padding:6px 10px}.chip-f.c2,.chip-f.c3{display:none}.chip-f.c1{left:0;top:6%}.chip-f.c4{right:0;bottom:2%}.v-prods button{width:58px;padding:5px 2px}.v-prods span{width:30px;height:30px}.v-prods b{font-size:9px}
-  .campo-h{flex-wrap:wrap;border-radius:22px;padding:8px}.campo-h input{flex:1 1 100%;padding:8px 10px;font-size:18px}.campo-h .btn{flex:1 1 100%;justify-content:space-between}
-  .accesos{gap:10px}.acceso{flex-direction:column;align-items:flex-start;padding:12px;gap:8px}.acceso>svg{width:42px;height:40px}.acceso b{font-size:14px}.acceso small{font-size:11.5px}.acceso i{display:none}}
+.acceso b{display:block;font-weight:900;font-size:14px;text-transform:uppercase;line-height:1.15}
+.acceso small{display:block;font-size:12px;line-height:1.35;margin-top:2px;color:var(--suave)}
+.acceso i{font-style:normal;font-weight:900;width:28px;height:28px;flex:none;border-radius:50%;border:2px solid var(--tinta);display:grid;place-items:center;font-size:13px;transition:background .2s}
+.acceso:hover i{background:var(--amarillo)}
+@media (max-width:1080px){.heroe2-g{grid-template-columns:minmax(0,1fr);grid-template-areas:"txt" "esc" "cta";row-gap:22px}.h2-txt,.h2-cta{align-self:auto}.h2-cta .acciones-cab{margin-top:0}.editor-h{margin:0 auto;width:100%}.accesos{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.heroe2{padding:16px 0 18px}.titular{font-size:clamp(38px,11.2vw,52px);margin-top:14px}.h2-txt .lead{font-size:15.5px;margin-top:12px}
+  .editor-h{border-radius:24px;box-shadow:var(--sombra)}.eh-barra{padding:10px}.eh-vivo{font-size:10px;left:8px;top:8px;padding:3px 8px}.v-prods{flex-wrap:nowrap;width:100%;justify-content:space-between}.v-prods button{padding:3px}.v-prods button:not(.on) b{display:none}.v-prods button.on{padding-right:10px}
+  .vitrina{height:min(300px,72vw)}.eh-pie{padding:10px}.v-tec{font-size:11.5px}
+  .campo-h input{font-size:16px;padding-left:10px}.campo-h .btn{padding-left:14px;font-size:13px}
+  .h2-garantias{gap:6px 14px;font-size:12px;margin-top:18px}
+  .accesos{gap:10px}.accesos .acceso{padding:9px;gap:9px}.acceso>svg{width:38px;height:38px;padding:5px}.acceso b{font-size:12.5px}.acceso small,.acceso i{display:none}}
 </style>
 </head>
 <body data-pagina="inicio" class="cargando">
@@ -326,31 +339,28 @@
     <div class="h2-txt">
       <h1 class="etiqueta" data-revela style="margin:0"><svg><use href="#estrella"/></svg>Estampados personalizados en Piedecuesta y Bucaramanga</h1>
       <p class="h1 titular">¡Tu diseño en <span class="rota pegada" id="rota">buzos!</span></p>
-      <p class="lead" data-revela>Escribe tu nombre, escoge el producto y míralo puesto. Lo estampamos en nuestro taller y te lo enviamos a cualquier ciudad de Colombia, desde una sola pieza.</p>
+      <p class="lead" data-revela>Escribe tu nombre, escoge la prenda y mírala lista antes de pedir. La estampamos en nuestro taller y te la enviamos a toda Colombia.</p>
     </div>
     <div class="h2-esc">
-      <div class="vitrina" id="vitrina" role="img" aria-label="Demostración: la prenda cambia de producto y color y tu nombre aparece estampado">
-        <svg class="v-fondo" viewBox="0 0 400 400" aria-hidden="true"><path fill="#01CFFA" stroke="#0B1B33" stroke-width="5" stroke-linejoin="round" d="M92 66c34-40 96-48 134-20 26 19 26 48 58 52 40 5 74 32 74 72 0 32-26 44-22 76 5 38-18 76-58 84-34 7-50-18-82-12-38 7-70 40-112 22-36-16-36-58-60-80C-2 236 2 196 30 172c20-18 18-46 30-70 8-16 20-26 32-36z"/></svg>
-        <svg class="v-anillo" viewBox="0 0 400 400" aria-hidden="true"><circle cx="200" cy="200" r="188" fill="none" stroke="#0B1B33" stroke-width="3" stroke-dasharray="4 14" stroke-linecap="round"/></svg>
-        <div class="v-prenda" id="v-prenda"></div>
-        <span class="sello-listo" aria-hidden="true">¡Listo!</span>
-        <span class="chip-f c1"><svg><use href="#estrella"/></svg>Desde 1 pieza</span>
-        <span class="chip-f c2"><svg><use href="#estrella"/></svg>Frente y espalda</span>
-        <span class="chip-f c3"><svg><use href="#estrella"/></svg>Lo ves antes de pedir</span>
-        <span class="chip-f c4"><svg><use href="#estrella"/></svg>Envíos a toda Colombia</span>
-      </div>
-      <div class="v-controles">
-        <div class="v-prods" id="v-prods" aria-label="Producto"></div>
-        <div class="v-colores" id="v-colores" aria-label="Color"></div>
-        <p class="v-tec" id="v-tec"></p>
+      <div class="editor-h">
+        <div class="eh-barra"><div class="v-prods" id="v-prods" role="group" aria-label="Producto"></div></div>
+        <div class="vitrina" id="vitrina" role="img" aria-label="Demostración: la prenda cambia de producto y color y tu nombre aparece estampado">
+          <span class="eh-vivo"><i></i>Vista previa</span>
+          <div class="v-prenda" id="v-prenda"></div>
+          <span class="sello-listo" aria-hidden="true">¡Listo!</span>
+        </div>
+        <div class="eh-pie">
+          <div class="eh-fila"><div class="v-colores" id="v-colores" role="group" aria-label="Color"></div><p class="v-tec" id="v-tec"></p></div>
+          <form class="prueba" id="prueba-h">
+            <label class="solo-lector" for="nombre-h">Escribe tu nombre o una frase</label>
+            <div class="campo-h"><input id="nombre-h" maxlength="16" placeholder="Tu nombre" autocomplete="off" enterkeyhint="go"><button class="btn" type="submit">Diseñar <i>→</i></button></div>
+          </form>
+        </div>
       </div>
     </div>
-    <div class="h2-form">
-      <form class="prueba" id="prueba-h">
-        <label for="nombre-h">Pruébalo: escribe tu nombre o una frase</label>
-        <div class="campo-h"><input id="nombre-h" maxlength="16" placeholder="Tu nombre" autocomplete="off" enterkeyhint="go"><button class="btn" type="submit" data-iman>Diseñar el mío <i>✦</i></button></div>
-      </form>
-      <div class="acciones-cab"><a class="enlace" href="https://wa.me/573212808077?text=Hola%20Tr%C3%A1nsfer!%2C%20quiero%20cotizar">Cotizar por WhatsApp <i>→</i></a><a class="enlace" href="tienda.html">Ver productos <i>→</i></a></div>
+    <div class="h2-cta">
+      <div class="acciones-cab"><a class="btn" href="personaliza.html" id="ir-h" data-iman>Empezar mi diseño <i>✦</i></a><a class="enlace" href="tienda.html">Ver la tienda <i>→</i></a></div>
+      <ul class="h2-garantias"><li><svg><use href="#estrella"/></svg>Desde 1 pieza</li><li><svg><use href="#estrella"/></svg>Frente y espalda</li><li><svg><use href="#estrella"/></svg>Envíos a toda Colombia</li></ul>
     </div>
   </div>
 </section>
