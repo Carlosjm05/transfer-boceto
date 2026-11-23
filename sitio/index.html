@@ -250,36 +250,120 @@
   .escena .globo{top:56%!important;right:-2%!important}
   .cierre .h1{font-size:38px}
 }
+
+/* ───── Héroe v2: demostración en vivo (22 nov 2026) ───── */
+.heroe2{padding:14px 0 18px;position:relative;overflow:hidden}
+.heroe2-g{display:grid;grid-template-columns:1fr 1.02fr;grid-template-areas:"txt esc" "form esc";column-gap:40px;row-gap:14px;align-items:center}
+.h2-txt{grid-area:txt;align-self:end}.h2-esc{grid-area:esc}.h2-form{grid-area:form;align-self:start}
+.titular{font-size:clamp(44px,5.4vw,88px);line-height:.94;margin-top:18px;letter-spacing:-.02em}
+.rota{display:block;width:max-content;white-space:nowrap;margin-top:.04em}
+.rota.cambia{animation:rota-p .55s var(--rebote)}
+@keyframes rota-p{0%{transform:translateY(45%) rotate(-5deg);opacity:0}100%{transform:none;opacity:1}}
+.h2-txt .lead{max-width:520px;margin-top:20px}
+.prueba label{display:block;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--vino);margin-bottom:8px}
+.campo-h{display:flex;gap:8px;align-items:center;background:#fff;border:var(--borde);border-radius:99px;padding:6px;box-shadow:var(--sombra);max-width:540px}
+.campo-h input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:19px;font-weight:900;text-transform:uppercase;color:var(--tinta);padding:0 8px 0 16px;letter-spacing:.02em}
+.campo-h input::placeholder{color:#b9b2a2}
+.campo-h .btn{flex:none}
+.h2-form .acciones-cab{margin-top:16px}
+.vitrina{position:relative;aspect-ratio:1/1;width:min(100%,600px,max(320px,calc(100svh - 300px)));margin:0 auto}
+.v-fondo{position:absolute;inset:4%;width:92%;height:92%}
+.v-anillo{position:absolute;inset:0;width:100%;height:100%;animation:gira-a 40s linear infinite}
+@keyframes gira-a{to{transform:rotate(360deg)}}
+.v-prenda{position:absolute;left:50%;top:50%;width:78%;transform:translate(-50%,-50%);filter:drop-shadow(8px 10px 0 rgba(11,27,51,.85))}
+.v-prenda.sale{animation:v-sale .24s ease-in forwards}.v-prenda.entra{animation:v-entra .5s var(--rebote)}
+@keyframes v-sale{to{transform:translate(-50%,-50%) scale(.8) rotate(-8deg);opacity:0}}
+@keyframes v-entra{from{transform:translate(-50%,-50%) scale(.8) rotate(8deg);opacity:0}}
+.vitrina.estampa .v-prenda{animation:v-estampa .45s var(--rebote)}
+@keyframes v-estampa{35%{transform:translate(-50%,-50%) scale(.965)}70%{transform:translate(-50%,-50%) scale(1.02)}}
+.v-capa{position:absolute;inset:0;pointer-events:none}.v-capa svg{width:100%;height:100%;display:block}
+.v-sombra{mix-blend-mode:multiply}.v-brillo{mix-blend-mode:screen}
+.v-area{position:absolute}
+.v-texto{position:absolute;left:50%;top:26%;transform:translate(-50%,-50%);white-space:nowrap;font-weight:900;line-height:1;letter-spacing:.01em}
+.v-texto.escribiendo::after{content:"";display:inline-block;width:.08em;height:.85em;margin-left:.06em;background:currentColor;vertical-align:-.05em;animation:cursor .7s steps(1) infinite}
+@keyframes cursor{50%{opacity:0}}
+.v-sticker{position:absolute;left:50%;top:66%;width:46%;transform:translate(-50%,-50%) scale(0);transition:transform .5s var(--rebote)}
+.v-sticker.ver{transform:translate(-50%,-50%) scale(1) rotate(-6deg)}
+.sello-listo{position:absolute;right:7%;top:9%;z-index:5;background:var(--vino);color:#fff;border:var(--borde);border-radius:99px;padding:10px 18px;font-weight:900;font-size:clamp(15px,1.6vw,22px);text-transform:uppercase;box-shadow:var(--sombra);transform:rotate(12deg) scale(0);transition:transform .45s var(--rebote)}
+.sello-listo.ver{transform:rotate(12deg) scale(1)}
+.chip-f{position:absolute;z-index:4;display:flex;align-items:center;gap:7px;background:#fff;border:var(--borde);border-radius:99px;padding:8px 14px;font-weight:800;font-size:13px;color:var(--tinta);box-shadow:var(--sombra);white-space:nowrap;animation:flota-c 4.5s ease-in-out infinite}
+.chip-f svg{width:14px;height:14px;color:var(--vino)}
+.chip-f.c1{left:-2%;top:18%}.chip-f.c2{right:-3%;top:36%;animation-delay:-1.2s}.chip-f.c3{left:0;bottom:22%;animation-delay:-2.4s}.chip-f.c4{right:2%;bottom:6%;animation-delay:-3.4s}
+@keyframes flota-c{50%{transform:translateY(-8px)}}
+.v-controles{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:6px}
+.v-prods{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.v-prods button{display:flex;flex-direction:column;align-items:center;gap:2px;width:72px;border:2px solid var(--tinta);border-radius:16px;background:#fff;padding:6px 4px;cursor:pointer;box-shadow:2px 2px 0 var(--tinta);transition:transform .2s var(--rebote),background .2s}
+.v-prods button:hover{transform:translateY(-2px)}.v-prods button.on{background:var(--amarillo)}
+.v-prods span{width:38px;height:38px;display:block}.v-prods span svg{width:100%;height:100%}
+.v-prods b{font-size:10.5px;font-weight:900;text-transform:uppercase;color:var(--tinta)}
+.v-colores{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.v-colores button{width:26px;height:26px;border-radius:50%;background:var(--c);border:2px solid var(--tinta);cursor:pointer}
+.v-colores button.on{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--tinta)}
+.v-tec{font-size:12.5px;font-weight:700;color:var(--suave)}
+.accesos-s{padding:4px 0 26px}
+.accesos{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.acceso{display:flex;align-items:center;gap:12px;border:var(--borde);border-radius:22px;padding:14px 16px;box-shadow:var(--sombra);color:var(--tinta);transition:transform .25s var(--rebote),box-shadow .25s}
+.acceso:hover{transform:translate(-3px,-3px);box-shadow:8px 8px 0 var(--tinta)}
+.acceso>svg{width:52px;height:50px;flex:none;transition:transform .35s var(--rebote)}
+.acceso:hover>svg{transform:rotate(-8deg) scale(1.08)}
+.acceso span{flex:1;min-width:0}
+.acceso b{display:block;font-weight:900;font-size:16px;text-transform:uppercase;line-height:1.1}
+.acceso small{display:block;font-size:12.5px;line-height:1.35;margin-top:3px;opacity:.85}
+.acceso i{font-style:normal;font-weight:900;width:34px;height:34px;flex:none;border-radius:50%;background:#fff;border:2px solid var(--tinta);display:grid;place-items:center;color:var(--tinta)}
+.acceso.a-azul{background:var(--azul);color:#fff}.acceso.a-vino{background:var(--vino);color:#fff}
+@media (max-width:1080px){.heroe2-g{grid-template-columns:1fr;grid-template-areas:"txt" "esc" "form"}.h2-txt,.h2-form{align-self:auto}.vitrina{width:min(100%,520px)}.accesos{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.titular{font-size:clamp(40px,12.4vw,58px)}.chip-f{font-size:11px;padding:6px 10px}.chip-f.c2,.chip-f.c3{display:none}.chip-f.c1{left:0;top:6%}.chip-f.c4{right:0;bottom:2%}.v-prods button{width:58px;padding:5px 2px}.v-prods span{width:30px;height:30px}.v-prods b{font-size:9px}
+  .campo-h{flex-wrap:wrap;border-radius:22px;padding:8px}.campo-h input{flex:1 1 100%;padding:8px 10px;font-size:18px}.campo-h .btn{flex:1 1 100%;justify-content:space-between}
+  .accesos{gap:10px}.acceso{flex-direction:column;align-items:flex-start;padding:12px;gap:8px}.acceso>svg{width:42px;height:40px}.acceso b{font-size:14px}.acceso small{font-size:11.5px}.acceso i{display:none}}
 </style>
 </head>
 <body data-pagina="inicio" class="cargando">
 <main>
 
-<!-- 1 · PORTADA -->
-<section class="heroe">
-  <svg class="cinta-color cinta-heroe" viewBox="0 0 1400 800" preserveAspectRatio="none" aria-hidden="true">
-    <path pathLength="1" stroke="#0B1B33" stroke-width="86" d="M1460 40C1260 60 1180 200 1020 220S760 160 760 330s300 230 300 400 -200 120 -340 140"/>
-    <path pathLength="1" stroke="#FECF03" stroke-width="72" d="M1460 40C1260 60 1180 200 1020 220S760 160 760 330s300 230 300 400 -200 120 -340 140"/>
-    <path pathLength="1" stroke="#01CFFA" stroke-width="44" d="M1460 40C1260 60 1180 200 1020 220S760 160 760 330s300 230 300 400 -200 120 -340 140"/>
-    <path pathLength="1" stroke="#B30A51" stroke-width="16" d="M1460 40C1260 60 1180 200 1020 220S760 160 760 330s300 230 300 400 -200 120 -340 140"/>
-  </svg>
-  <div class="env">
-    <div>
+<!-- 1 · PORTADA: demostración en vivo del personalizador (assets/heroe.js) -->
+<section class="heroe2">
+  <div class="env heroe2-g">
+    <div class="h2-txt">
       <h1 class="etiqueta" data-revela style="margin:0"><svg><use href="#estrella"/></svg>Estampados personalizados en Piedecuesta y Bucaramanga</h1>
-      <p class="h1" data-palabras>¡Tu diseño,<br>en lo que<br><span class="pegada">quieras!</span></p>
-      <p class="lead" data-revela style="--d:3">Camisetas, buzos, gorras, mugs y termos con tu logo, tu foto o tu frase. Lo ves puesto antes de pedir, lo estampamos en nuestro taller de Piedecuesta y te lo enviamos a cualquier ciudad de Colombia.</p>
-      <div class="acciones" data-revela style="--d:4"><a class="btn" href="personaliza.html" data-iman>Diseña el tuyo ahora <i>→</i></a><a class="enlace" href="tienda.html">Ver productos <i>→</i></a></div>
-      <div class="cifras" data-revela style="--d:5"><div><b>×1</b><span>Desde una sola pieza</span></div><div><b>DTF</b><span>y sublimación</span></div><div><b>COL</b><span>Envíos a todo el país</span></div></div>
+      <p class="h1 titular">¡Tu diseño en <span class="rota pegada" id="rota">buzos!</span></p>
+      <p class="lead" data-revela>Escribe tu nombre, escoge el producto y míralo puesto. Lo estampamos en nuestro taller y te lo enviamos a cualquier ciudad de Colombia, desde una sola pieza.</p>
     </div>
-    <div class="escena" aria-hidden="true">
-      <div class="mancha" data-revela="zoom"><svg viewBox="0 0 400 400"><path fill="#01CFFA" stroke="#0B1B33" stroke-width="6" stroke-linejoin="round" d="M92 66c34-40 96-48 134-20 26 19 26 48 58 52 40 5 74 32 74 72 0 32-26 44-22 76 5 38-18 76-58 84-34 7-50-18-82-12-38 7-70 40-112 22-36-16-36-58-60-80C-2 236 2 196 30 172c20-18 18-46 30-70 8-16 20-26 32-36z"/><circle cx="356" cy="76" r="26" fill="#FECF03" stroke="#0B1B33" stroke-width="6"/><circle cx="54" cy="330" r="16" fill="#B30A51" stroke="#0B1B33" stroke-width="6"/></svg></div>
-      <div class="modelo" data-revela style="--d:2"><img src="../img/recortes/modelo-hombre-buzo.webp" alt=""></div>
-      <img class="adorno mece" src="../img/ilus/gorra.webp" alt="" style="left:-2%;top:4%;width:130px">
-      <img class="adorno flota lento" src="../img/ilus/lapiz.webp" alt="" style="right:-6%;bottom:8%;width:200px">
-      <div class="nota-flecha" style="left:-2%;bottom:-2%">Hecho en<br>Piedecuesta<svg viewBox="0 0 70 46"><path d="M4 6c20 4 40 14 52 34M56 40l-12-2M56 40l2-12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></div>
+    <div class="h2-esc">
+      <div class="vitrina" id="vitrina" role="img" aria-label="Demostración: la prenda cambia de producto y color y tu nombre aparece estampado">
+        <svg class="v-fondo" viewBox="0 0 400 400" aria-hidden="true"><path fill="#01CFFA" stroke="#0B1B33" stroke-width="5" stroke-linejoin="round" d="M92 66c34-40 96-48 134-20 26 19 26 48 58 52 40 5 74 32 74 72 0 32-26 44-22 76 5 38-18 76-58 84-34 7-50-18-82-12-38 7-70 40-112 22-36-16-36-58-60-80C-2 236 2 196 30 172c20-18 18-46 30-70 8-16 20-26 32-36z"/></svg>
+        <svg class="v-anillo" viewBox="0 0 400 400" aria-hidden="true"><circle cx="200" cy="200" r="188" fill="none" stroke="#0B1B33" stroke-width="3" stroke-dasharray="4 14" stroke-linecap="round"/></svg>
+        <div class="v-prenda" id="v-prenda"></div>
+        <span class="sello-listo" aria-hidden="true">¡Listo!</span>
+        <span class="chip-f c1"><svg><use href="#estrella"/></svg>Desde 1 pieza</span>
+        <span class="chip-f c2"><svg><use href="#estrella"/></svg>Frente y espalda</span>
+        <span class="chip-f c3"><svg><use href="#estrella"/></svg>Lo ves antes de pedir</span>
+        <span class="chip-f c4"><svg><use href="#estrella"/></svg>Envíos a toda Colombia</span>
+      </div>
+      <div class="v-controles">
+        <div class="v-prods" id="v-prods" aria-label="Producto"></div>
+        <div class="v-colores" id="v-colores" aria-label="Color"></div>
+        <p class="v-tec" id="v-tec"></p>
+      </div>
+    </div>
+    <div class="h2-form">
+      <form class="prueba" id="prueba-h">
+        <label for="nombre-h">Pruébalo: escribe tu nombre o una frase</label>
+        <div class="campo-h"><input id="nombre-h" maxlength="16" placeholder="Tu nombre" autocomplete="off" enterkeyhint="go"><button class="btn" type="submit" data-iman>Diseñar el mío <i>✦</i></button></div>
+      </form>
+      <div class="acciones-cab"><a class="enlace" href="https://wa.me/573212808077?text=Hola%20Tr%C3%A1nsfer!%2C%20quiero%20cotizar">Cotizar por WhatsApp <i>→</i></a><a class="enlace" href="tienda.html">Ver productos <i>→</i></a></div>
     </div>
   </div>
 </section>
+
+<section class="accesos-s" aria-label="Lo más importante">
+  <div class="env accesos">
+    <a class="acceso t-amarillo" href="personaliza.html"><svg viewBox="0 0 120 112" aria-hidden="true"><path d="M20 92 L74 38 L92 56 L38 110 L16 114 Z" fill="#FECF03" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M74 38 L86 26 Q94 18 102 26 L104 28 Q112 36 104 44 L92 56" fill="#B30A51" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M60 44 C62 57 66 61 78 63 C66 65 62 69 60 82 C58 69 54 65 42 63 C54 61 58 57 60 44 Z" fill="#01CFFA" stroke="#0B1B33" stroke-width="5" transform="translate(-30 -40) scale(.8)"/></svg><span><b>Personaliza en línea</b><small>Frente y espalda, tu logo, nombres y la ficha para el taller</small></span><i>→</i></a>
+    <a class="acceso t-cian" href="tienda.html"><svg viewBox="0 0 120 112" aria-hidden="true"><path d="M14 40 L24 14 H96 L106 40 Z" fill="#FECF03" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M18 40 V100 H102 V40" fill="#fff" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M44 100 V66 H76 V100" fill="#01CFFA" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/></svg><span><b>Tienda</b><small>Buzos, camisetas, gorras, mugs, termos y llaveros</small></span><i>→</i></a>
+    <a class="acceso a-azul" href="empresas.html"><svg viewBox="0 0 120 112" aria-hidden="true"><rect x="16" y="22" width="52" height="82" rx="6" fill="#fff" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><rect x="68" y="48" width="38" height="56" rx="6" fill="#01CFFA" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M30 40h10M48 40h6M30 58h10M48 58h6M30 76h10M48 76h6" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/></svg><span><b>Empresas y colegios</b><small>Dotación, buzos de prom y regalos con tu logo</small></span><i>→</i></a>
+    <a class="acceso a-vino" href="navidad.html"><svg viewBox="0 0 120 112" aria-hidden="true"><path d="M60 8 L94 64 H26 Z" fill="#1F9D55" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M60 34 L102 98 H18 Z" fill="#1F9D55" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><rect x="50" y="98" width="20" height="12" fill="#7a4b26" stroke="#0B1B33" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><path d="M60 44 C62 57 66 61 78 63 C66 65 62 69 60 82 C58 69 54 65 42 63 C54 61 58 57 60 44 Z" fill="#FECF03" stroke="#0B1B33" stroke-width="5" transform="translate(30 -40) scale(.5)"/></svg><span><b>Navidad</b><small data-dias-h>Camisetas para la familia y regalos</small></span><i>→</i></a>
+  </div>
+</section>
+
 
 <div class="franja"><div class="pista">
   <span>Buzos</span><span>Camisetas</span><span>Gorras</span><span>Mugs</span><span>Termos</span><span>Llaveros</span><span>Dotación</span>
@@ -516,6 +600,8 @@
 </main>
 
 <script src="assets/sitio.js"></script>
+<script src="assets/prendas.js"></script>
+<script src="assets/heroe.js"></script>
 <script>
 // Personalizador corto
 const t = document.getElementById('txt'), v = document.getElementById('vivo');
