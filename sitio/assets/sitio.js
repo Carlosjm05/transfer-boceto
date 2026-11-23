@@ -206,6 +206,27 @@
   document.querySelector('[data-abrir-menu]').addEventListener('click', () => { mm.classList.add('abierto'); mm.setAttribute('aria-hidden', 'false'); });
   document.querySelector('[data-cerrar-menu]').addEventListener('click', () => { mm.classList.remove('abierto'); mm.setAttribute('aria-hidden', 'true'); });
 
+  /* ───── «Nosotros lo diseñamos por ti»: cualquier elemento con data-disenamelo abre este formulario ───── */
+  if (document.querySelector('[data-disenamelo]')) {
+    document.body.insertAdjacentHTML('beforeend', `<dialog class="dlg-dj" aria-labelledby="dj-t"><form method="dialog"><button type="button" class="redondo cerrar-dj" aria-label="Cerrar">×</button>
+      <h2 class="h3" id="dj-t">Nosotros lo diseñamos por ti</h2><p>Cuéntanos qué te imaginas, así sea solo la idea. Te escribimos por WhatsApp con la propuesta antes de estampar.</p>
+      <label>¿En qué lo quieres?<select name="prod">${['Camiseta', 'Buzo', 'Gorra', 'Mug', 'Termo', 'Llavero', 'Varios productos', 'Todavía no sé'].map(p => `<option>${p}</option>`).join('')}</select></label>
+      <label>¿Qué te imaginas?<textarea name="idea" rows="4" maxlength="500" required placeholder="Ej.: un mug para el cumpleaños de mi mamá, con flores, su nombre y colores pastel"></textarea></label>
+      <div class="dos-dj"><label>¿Cuántas unidades?<input name="cant" type="number" min="1" inputmode="numeric" placeholder="1"></label><label>¿Para cuándo?<input name="fecha" type="text" maxlength="40" placeholder="Ej.: 15 de diciembre"></label></div>
+      <label>Tu nombre<input name="nombre" type="text" maxlength="60" autocomplete="name"></label>
+      <button type="submit" class="btn">Enviar mi idea por WhatsApp <i>→</i></button><small>Si tienes fotos o ejemplos que te gusten, mándalos en el mismo chat.</small></form></dialog>`);
+    const dj = document.querySelector('.dlg-dj'), fj = dj.querySelector('form');
+    const NOMBRES = {camiseta: 'Camiseta', buzo: 'Buzo', gorra: 'Gorra', mug: 'Mug', termo: 'Termo'};
+    document.addEventListener('click', e => { if (!e.target.closest('[data-disenamelo]')) return; e.preventDefault(); const p = window.PERSONALIZADOR && NOMBRES[window.PERSONALIZADOR.S.prod]; if (p) fj.prod.value = p; dj.showModal(); });
+    dj.addEventListener('click', e => { if (e.target === dj || e.target.closest('.cerrar-dj')) dj.close(); });
+    fj.addEventListener('submit', e => {
+      e.preventDefault(); const v = n => fj.elements[n].value.trim();
+      let t = `Hola Tránsfer!, quiero que ustedes me hagan el diseño.\n\n• Producto: ${v('prod')}\n• Idea: ${v('idea')}`;
+      if (v('cant')) t += `\n• Cantidad: ${v('cant')}`; if (v('fecha')) t += `\n• Para cuándo: ${v('fecha')}`; if (v('nombre')) t += `\n• Mi nombre: ${v('nombre')}`;
+      window.open(WA + encodeURIComponent(t), '_blank', 'noopener'); dj.close();
+    });
+  }
+
   /* ───── Carrito ───── */
   // El pedido se guarda en este navegador (localStorage) para que no se pierda al cambiar de pagina.
   const CLAVE = 'transfer-pedido';

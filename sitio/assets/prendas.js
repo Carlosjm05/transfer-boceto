@@ -27,6 +27,10 @@
   const COL_BLANCO = [['Blanco', '#FFFFFF']];
   const TALLAS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
+  // Superficie extendida de un cilindro: hoja blanca y, debajo, qué parte es cada tramo
+  const extendido = (x, y, w, h, tramos) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#fff" ${linea}/>` +
+    tramos.map((t, i) => { const px = x + w * i / (tramos.length - 1), a = i === 0 ? 'start' : i === tramos.length - 1 ? 'end' : 'middle'; return t ? `<path d="M${px} ${y + h + 4} v10" stroke="#0B1B33" stroke-opacity=".5" stroke-width="2"/><text x="${px}" y="${y + h + 36}" text-anchor="${a}" font-family="Rubik,Arial,sans-serif" font-weight="800" font-size="21" fill="#0B1B33" fill-opacity=".7">${t}</text>` : ''; }).join('');
+
   const PRENDAS = {
     camiseta: {nombre: 'Camiseta', art: 'una camiseta', tecnica: 'DTF', colores: COL_ROPA, tallas: TALLAS, vistas: {
       frente: {nombre: 'Frente', vb: [600, 660], area: [200, 135, 200, 250], cm: 28, cuello: 92,
@@ -55,22 +59,30 @@
         sombra: u => sombra(u, 600, 520, ['M120 330 C118 160 206 92 300 92 C394 92 482 160 480 330 Z', 'M84 334 C150 300 450 300 516 334 C528 368 506 404 470 410 C400 392 200 392 130 410 C94 404 72 368 84 334 Z'],
           '<path d="M180 300 C176 240 200 180 240 140" stroke-width="18"/><path d="M420 300 C424 240 400 180 360 140" stroke-width="18"/>', '<path d="M90 340 C160 318 440 318 510 340" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="3" stroke-dasharray="6 6"/>')}}},
     mug: {nombre: 'Mug', art: 'un mug', tecnica: 'Sublimación', colores: COL_BLANCO, tallas: null, vistas: {
-      frente: {nombre: 'Frente', vb: [600, 560], area: [175, 205, 220, 208], cm: 9,
+      // El diseño se arma extendido y cubre todo el mug; frente y reverso solo sirven para dibujarlo
+      vuelta: {nombre: 'Todo el mug', sangrado: true, vb: [700, 420], area: [20, 44, 660, 313.5], cm: 20,
+        cil: {cx: 285, r: 135, y0: 120, y1: 500, c0: 20, c1: 18, circ: 25.7, lados: [{n: 'Asa a la izquierda', vt: 'reverso', giro: -90}, {n: 'De frente', vt: 'frente', giro: 0, sinAsa: true}, {n: 'Asa a la derecha', vt: 'frente', giro: 90}]},
+        base: () => extendido(20, 44, 660, 313.5, ['Asa', 'Un lado', 'Frente', 'Otro lado', 'Asa']), sombra: () => ''},
+      frente: {soloDibujo: true, nombre: 'Frente', vb: [600, 560], area: [175, 205, 220, 208], cm: 9,
         base: (c, d) => `<path d="M410 190 C530 186 540 410 410 410 L410 370 C490 372 488 228 410 230 Z" fill="${c}" ${linea}/><path d="M150 120 L420 120 L420 500 C420 524 150 524 150 500 Z" fill="${c}" ${linea}/><ellipse cx="285" cy="120" rx="135" ry="20" fill="${c}" ${linea}/><ellipse cx="285" cy="122" rx="122" ry="13" fill="${d}"/>`,
         sombra: u => `<defs><clipPath id="c${u}"><path d="M150 120 L420 120 L420 500 C420 524 150 524 150 500 Z"/></clipPath></defs><g clip-path="url(#c${u})">${cilindro(u, 150, 100, 270, 430)}</g><path d="M410 190 C530 186 540 410 410 410 L410 370 C490 372 488 228 410 230 Z" fill="#000" opacity=".12"/>`,
         brillo: u => `<g clip-path="url(#c${u})">${brilloCil(u, 150, 100, 270, 430)}</g>`},
-      reverso: {nombre: 'Reverso', espejo: true, vb: [600, 560], area: [175, 205, 220, 208], cm: 9}}},
+      reverso: {soloDibujo: true, nombre: 'Reverso', espejo: true, vb: [600, 560], area: [175, 205, 220, 208], cm: 9}}},
     termo: {nombre: 'Termo', art: 'un termo', tecnica: 'Sublimación', colores: COL_BLANCO, tallas: null, vistas: {
-      frente: {nombre: 'Frente', vb: [600, 660], area: [238, 232, 124, 284], cm: 7,
+      vuelta: {nombre: 'Todo el termo', sangrado: true, vb: [700, 580], area: [40, 44, 620, 472.4], cm: 21,
+        cil: {cx: 300, r: 78, y0: 146, y1: 622, c0: 0, c1: 0, circ: 22, lados: [{n: 'De frente', vt: 'frente', giro: 0}, {n: 'Por detrás', vt: 'frente', giro: 180}]},
+        base: () => extendido(40, 44, 620, 472.4, ['Atrás', '', 'Frente', '', 'Atrás']), sombra: () => ''},
+      frente: {soloDibujo: true, nombre: 'Frente', vb: [600, 660], area: [238, 232, 124, 284], cm: 7,
         base: (c, d) => `<rect x="232" y="56" width="136" height="70" rx="14" fill="${c}" ${linea}/><rect x="244" y="122" width="112" height="22" fill="${d}"/><path d="M222 150 Q222 140 232 140 L368 140 Q378 140 378 150 L378 610 Q378 628 360 628 L240 628 Q222 628 222 610 Z" fill="${c}" ${linea}/>`,
         sombra: u => `<defs><clipPath id="c${u}"><path d="M222 150 Q222 140 232 140 L368 140 Q378 140 378 150 L378 610 Q378 628 360 628 L240 628 Q222 628 222 610 Z"/><rect x="232" y="56" width="136" height="70" rx="14"/></clipPath></defs><g clip-path="url(#c${u})">${cilindro(u, 222, 50, 156, 590)}</g>`,
         brillo: u => `<defs><clipPath id="c${u}"><path d="M222 150 Q222 140 232 140 L368 140 Q378 140 378 150 L378 610 Q378 628 360 628 L240 628 Q222 628 222 610 Z"/></clipPath></defs><g clip-path="url(#c${u})">${brilloCil(u, 222, 140, 156, 490)}</g>`},
-      reverso: {nombre: 'Reverso', espejo: true, vb: [600, 660], area: [238, 232, 124, 284], cm: 7}}},
+      reverso: {soloDibujo: true, nombre: 'Reverso', espejo: true, vb: [600, 660], area: [238, 232, 124, 284], cm: 7}}},
   };
   // el reverso del mug y del termo es el frente en espejo
   ['mug', 'termo'].forEach(p => { const f = PRENDAS[p].vistas.frente, r = PRENDAS[p].vistas.reverso; Object.assign(r, {base: f.base, sombra: f.sombra, brillo: f.brillo}); });
   const vistaDe = (p, v) => PRENDAS[p].vistas[v];
   const areaDe = v => { const [x, y, w, h] = v.area; return v.espejo ? [v.vb[0] - x - w, y, w, h] : [x, y, w, h]; };
+  const vistasDe = P => Object.entries(P.vistas).filter(([, v]) => !v.soloDibujo);   // las que el cliente diseña
   let uid = 0;
   function svgDe(p, vista, capa, color) {
     const v = vistaDe(p, vista), [w, h] = v.vb, u = 'p' + (++uid);
@@ -80,5 +92,5 @@
   }
   const imgDeSvg = svg => new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg); });
 
-  window.TR_PRENDAS = {PRENDAS, vistaDe, areaDe, svgDe, imgDeSvg, oscuro};
+  window.TR_PRENDAS = {PRENDAS, vistaDe, vistasDe, areaDe, svgDe, imgDeSvg, oscuro};
 })();

@@ -425,3 +425,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   body.cargando{opacity:1}
 }
 [data-contador][hidden]{display:none}
+
+/* ───── Diálogo «Nosotros lo diseñamos por ti» (23 nov 2026) ───── */
+.dlg-dj{margin:auto;border:var(--borde);border-radius:var(--r-panel);padding:24px;width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto;background:#fff;color:var(--texto);box-shadow:var(--sombra-g)}
+.dlg-dj::backdrop{background:rgba(11,27,51,.6)}
+.dlg-dj form{display:grid;gap:12px;position:relative}
+.dlg-dj h2{color:var(--tinta);padding-right:56px}.dlg-dj p{font-size:15px;line-height:1.5}
+.dlg-dj label{display:grid;gap:6px;font-size:13px;font-weight:800;color:var(--tinta)}
+.dlg-dj input,.dlg-dj select,.dlg-dj textarea{width:100%;border:2px solid var(--tinta);border-radius:12px;padding:10px 12px;font:inherit;font-size:16px;font-weight:500;color:var(--tinta);background:#fff;resize:vertical}
+.dlg-dj .dos-dj{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}
+.dlg-dj .btn{justify-content:space-between;margin-top:4px}.dlg-dj small{font-size:13px;color:var(--suave)}
+.dlg-dj .cerrar-dj{position:absolute;right:0;top:0;font-size:22px;font-weight:800;z-index:1}
+button.enlace{border:0;background:none;font-family:inherit;cursor:pointer;padding:0;text-align:left}
