@@ -109,7 +109,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .muesca{clip-path:polygon(0 0,calc(100% - 46px) 0,100% 46px,100% 100%,0 100%)}
 
 /* Pastillas */
-.pastillas{display:flex;flex-wrap:wrap;gap:8px}
+.pastillas{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:2} /* encima de titulos con sombra que la rozan */
 .pastillas button,.pastillas a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:var(--borde);border-radius:99px;padding:7px 15px;font-size:13px;font-weight:700;color:var(--tinta);box-shadow:3px 3px 0 var(--tinta);transition:transform .15s,box-shadow .15s,background .15s}
 .pastillas button:hover,.pastillas a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--tinta)}
 .pastillas .on{background:var(--amarillo)}
@@ -305,7 +305,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .pie .contacto-p svg{width:32px;height:32px;padding:7px;border-radius:50%;background:#fff;color:var(--tinta);border:2px solid var(--tinta);box-shadow:2px 2px 0 var(--tinta);flex:none}
 .pie h5{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--amarillo);margin-bottom:14px}
 .pie ul{list-style:none;display:grid;gap:10px;font-size:15px;font-weight:600;color:#fff}
-.pie ul a:hover{color:var(--amarillo)}
+.pie ul a{display:inline-block;padding:3px 0}.pie ul a:hover{color:var(--amarillo)}
 .carretera{position:relative;z-index:2;height:86px;margin-top:30px;display:flex;align-items:flex-start;gap:10px;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--amarillo)}
 .carretera::after{content:"";position:absolute;left:0;right:0;bottom:10px;border-bottom:3px dashed rgba(254,207,3,.55)}
 .carretera .furgon{position:absolute;bottom:13px;left:-150px;width:120px;animation:furgon 11s linear infinite}
@@ -345,7 +345,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .menu a.temporada::after{content:"";position:absolute;top:4px;right:2px;width:8px;height:8px;border-radius:50%;background:var(--vino);border:2px solid #fff;animation:latido 1.6s ease-in-out infinite}
 @keyframes latido{50%{transform:scale(1.35)}}
 .buscador{position:fixed;inset:0;z-index:120;background:rgba(11,27,51,.55);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;padding:90px 16px 20px;opacity:0;transition:opacity .2s}
-.buscador.abierto{opacity:1}
+.buscador:not(.abierto){pointer-events:none}.buscador.abierto{opacity:1}
+/* Lo oculto con el atributo hidden nunca debe ocupar pantalla, aunque otra regla le ponga display */
+[hidden]{display:none!important}
 .buscador-caja{width:min(680px,100%);display:flex;align-items:center;gap:12px;background:#fff;border:var(--borde);border-radius:99px;padding:8px 8px 8px 22px;box-shadow:var(--sombra-g)}
 .buscador-caja>svg{width:22px;height:22px;flex:none;color:var(--tinta)}
 .buscador-caja input{flex:1;border:0;outline:0;font:inherit;font-size:18px;font-weight:600;color:var(--tinta);background:transparent;min-width:0}
