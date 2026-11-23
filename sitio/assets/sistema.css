@@ -70,6 +70,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .btn.ancho{width:100%;justify-content:space-between}
 .enlace{display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta)}
 .enlace i{width:34px;height:34px;border-radius:50%;border:var(--borde);background:#fff;display:grid;place-items:center;font-style:normal;transition:transform .25s var(--rebote),background .2s}
+.enlace.claro{color:#fff}.enlace.claro i{background:transparent;color:#fff;border-color:#fff}
 .enlace:hover i{transform:translateX(4px);background:var(--amarillo)}
 
 /* ───── Cajas con tinta ───── */
@@ -336,7 +337,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* Sin desplazamiento lateral en celular (las franjas inclinadas se salen a proposito). clip no rompe position:sticky */
 @supports (overflow:clip){html,body{overflow-x:clip}}
-@media (max-width:640px){.btn{max-width:100%;white-space:normal;line-height:1.2;text-align:left}}
+@media (max-width:640px){.btn{max-width:100%;white-space:normal;line-height:1.2;text-align:left}.cabecera .texto{min-width:0}.cabecera .texto .h1{font-size:clamp(30px,8.6vw,46px)}}
+@media (prefers-reduced-motion:reduce){.ruta-via .furgon{display:none}}
+.vuela{position:fixed;z-index:300;width:64px;height:64px;object-fit:contain;border-radius:14px;border:2px solid var(--tinta);background:#fff;pointer-events:none;box-shadow:3px 3px 0 var(--tinta)}
 /* ───── Buscador, volver arriba, accesibilidad (v11) ───── */
 .menu a.temporada{position:relative}
 .menu a.temporada::after{content:"";position:absolute;top:4px;right:2px;width:8px;height:8px;border-radius:50%;background:var(--vino);border:2px solid #fff;animation:latido 1.6s ease-in-out infinite}

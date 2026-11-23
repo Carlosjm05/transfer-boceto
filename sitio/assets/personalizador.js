@@ -217,7 +217,7 @@
     if (!el) return;
     const cx = r.left + el.x * r.width, cy = r.top + el.y * r.height;
     accion = {tipo: h ? (h.classList.contains('h-tam') ? 'tam' : 'rot') : 'mover', r, x0: e.clientX, y0: e.clientY, ex: el.x, ey: el.y, w0: el.w, d0: Math.hypot(e.clientX - cx, e.clientY - cy) || 1, cx, cy, movio: false};
-    escena.setPointerCapture(e.pointerId); e.preventDefault();
+    try { escena.setPointerCapture(e.pointerId); } catch (err) {} e.preventDefault();
   });
   escena.addEventListener('pointermove', e => {
     if (!accion) return; const el = elSel(); if (!el) return; const a = accion; a.movio = true;

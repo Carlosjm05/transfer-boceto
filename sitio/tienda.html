@@ -60,6 +60,7 @@
 .prod-acc{display:flex;gap:8px;margin-top:auto;padding-top:12px}
 .btn-mini{flex:1;display:inline-flex;justify-content:center;align-items:center;gap:6px;background:var(--azul);color:#fff;border:var(--borde);border-radius:99px;padding:8px 10px;font-weight:800;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;box-shadow:2px 2px 0 var(--tinta);transition:transform .2s,box-shadow .2s}
 .btn-mini:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--tinta);background:var(--vino)}
+@media (max-width:640px){.btn-mini .est{display:none}}
 .btn-wa{flex:none;width:38px;height:38px;border-radius:50%;background:#25D366;color:#fff;border:var(--borde);display:grid;place-items:center;box-shadow:2px 2px 0 var(--tinta);transition:transform .2s var(--rebote)}
 .btn-wa:hover{transform:rotate(-10deg) scale(1.08)}
 .btn-wa svg{width:20px;height:20px}
@@ -183,7 +184,7 @@ const PERSO = {Buzos:'buzo', Camisetas:'camiseta', 'Dotación':'camiseta', Gorra
 const ficha = (p, i) => `<article class="prod" style="animation-delay:${i * 45}ms" data-cat="${p.cat}">
   <a class="prod-img ${p.tono}" href="producto.html?p=${p.id}"><span class="etq">${p.cat}</span>${p.nuevo ? '<span class="nuevo">Nuevo</span>' : ''}<img src="${p.img}" alt="${p.nombre}: ${p.cat.toLowerCase()} personalizado${p.cat === 'Mugs' || p.cat === 'Termos' || p.cat === 'Llaveros' ? 's' : ''}, ${p.sub.toLowerCase()}" loading="lazy"></a>
   <div class="prod-info"><a class="prod-nombre" href="producto.html?p=${p.id}">${p.nombre}</a><span class="sub">${p.sub}</span>
-    <div class="prod-acc"><a class="btn-mini" href="personaliza.html${PERSO[p.cat] ? '?producto=' + PERSO[p.cat] : ''}">Personalizar ✦</a><a class="btn-wa" href="${WA}${encodeURIComponent('Hola Tránsfer!, quiero cotizar: ' + p.nombre)}" aria-label="Cotizar ${p.nombre} por WhatsApp"><svg><use href="#i-wa"/></svg></a></div></div></article>`;
+    <div class="prod-acc"><a class="btn-mini" href="personaliza.html${PERSO[p.cat] ? '?producto=' + PERSO[p.cat] : ''}">Personalizar<span class="est"> ✦</span></a><a class="btn-wa" href="${WA}${encodeURIComponent('Hola Tránsfer!, quiero cotizar: ' + p.nombre)}" aria-label="Cotizar ${p.nombre} por WhatsApp"><svg><use href="#i-wa"/></svg></a></div></div></article>`;
 document.querySelectorAll('[data-cuenta-cat]').forEach(s => { const c = s.dataset.cuentaCat; const n = CATALOGO.filter(p => !c || p.cat === c).length; s.textContent = n + (n === 1 ? ' producto' : ' productos'); });
 document.querySelectorAll('[data-ir]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); location.hash = a.dataset.ir; document.getElementById('cats').scrollIntoView({behavior: 'smooth', block: 'start'}); }));
 const rejilla = document.getElementById('rejilla'), total = document.getElementById('total');

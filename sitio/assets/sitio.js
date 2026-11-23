@@ -230,10 +230,20 @@
     const q = e.target.closest('[data-quitar]'); if (q) { pedido.splice(+q.dataset.quitar, 1); pintarCarrito(); }
     const a = e.target.closest('[data-agregar]');
     if (a) { e.preventDefault(); const talla = (document.querySelector('[data-tallas] .on') || {}).textContent || '—', cant = +(document.querySelector('[data-cant]') || {value: 1}).value || 1;
-      pedido.push({id: a.dataset.agregar, talla, cant}); pintarCarrito(); abrirCarrito(); }
+      pedido.push({id: a.dataset.agregar, talla, cant}); pintarCarrito(); conTope(volar(mini(a.dataset.agregar).img, a)).then(abrirCarrito); }
   });
   pintarCarrito();
-  window.TRANSFER.agregar = item => { pedido.push(item); pintarCarrito(); abrirCarrito(); };
+  // La imagen del producto vuela hasta el carrito antes de abrirlo
+  function volar(src, desde) {
+    const meta = document.querySelector('[data-abrir-carrito]'); if (!src || !meta || reducido) return Promise.resolve();
+    const a = desde ? desde.getBoundingClientRect() : {left: innerWidth / 2 - 32, top: innerHeight / 2 - 32, width: 64, height: 64}, b = meta.getBoundingClientRect();
+    const im = new Image(); im.src = src; im.className = 'vuela'; im.alt = ''; document.body.appendChild(im);
+    const x0 = a.left + a.width / 2 - 32, y0 = a.top + a.height / 2 - 32, x1 = b.left + b.width / 2 - 32, y1 = b.top + b.height / 2 - 32;
+    return im.animate([{transform: `translate(${x0}px,${y0}px) scale(1)`, opacity: 1}, {transform: `translate(${(x0 + x1) / 2}px,${Math.min(y0, y1) - 80}px) scale(.8) rotate(-12deg)`, opacity: 1, offset: .55}, {transform: `translate(${x1}px,${y1}px) scale(.25)`, opacity: .6}], {duration: 750, easing: 'cubic-bezier(.5,0,.3,1)'}).finished.then(() => im.remove());
+  }
+  let ultimoClic = null; document.addEventListener('pointerdown', e => { ultimoClic = e.target.closest('button, a'); }, true);
+  const conTope = p => Promise.race([p, new Promise(r => setTimeout(r, 850))]);   // la animacion nunca bloquea el pedido
+  window.TRANSFER.agregar = item => { pedido.push(item); pintarCarrito(); conTope(volar(item.img, ultimoClic)).then(abrirCarrito); };
 
   /* ───── Buscador (productos, categorias y paginas) ───── */
   const sinTildes = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
