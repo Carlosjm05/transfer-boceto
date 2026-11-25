@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Aprueba tu diseño · Tránsfer!</title>
+<meta name="description" content="Revisa tu diseño y apruébalo, o pide un cambio, antes de que lo produzcamos.">
+<meta name="theme-color" content="#053468">
+<link rel="icon" href="../recursos/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/sistema.css?v=8bb46786">
+<style>
+.ap-g{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start;padding-top:10px}
+.ap-foto{background:#fff;border:var(--borde);border-radius:var(--r-panel);box-shadow:var(--sombra-g);overflow:hidden;padding:12px}
+.ap-foto img{width:100%;height:auto;display:block;border-radius:14px}
+.ap-foto p{font-size:13px;color:var(--suave);padding:10px 4px 2px}
+.ap-c{background:#fff;border:var(--borde);border-radius:var(--r-panel);box-shadow:var(--sombra-g);padding:22px}
+.ap-c .codigo{display:inline-block;background:var(--azul);color:var(--amarillo);border-radius:99px;padding:5px 14px;font-weight:900;letter-spacing:.06em;font-size:15px}
+.ap-c h1{font-weight:900;text-transform:uppercase;color:var(--azul);font-size:clamp(28px,3.4vw,42px);line-height:1;margin:14px 0 8px}
+.ap-c dl{display:grid;gap:10px;margin:18px 0}
+.ap-c dt{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--vino)}
+.ap-c dd{margin:0;font-weight:600;color:var(--tinta)}
+.ap-c label.et{display:block;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta);margin:14px 0 6px}
+.ap-c input[type=text],.ap-c textarea{width:100%;border:2px solid var(--tinta);border-radius:12px;padding:11px 13px;font:inherit;font-size:16px;color:var(--tinta);background:#fff}
+.rev{display:flex;gap:12px;align-items:flex-start;background:var(--crema);border:2px solid var(--tinta);border-radius:14px;padding:12px 14px;margin:16px 0;font-weight:700;font-size:14.5px;color:var(--tinta);cursor:pointer}
+.rev input{width:22px;height:22px;flex:none;accent-color:var(--azul);margin-top:1px}
+.ap-b{display:grid;gap:10px}.ap-b .btn{justify-content:space-between}
+.btn.verde{background:#25D366;color:#fff}.btn:disabled{opacity:.45;pointer-events:none}
+.ap-listo{background:var(--amarillo);border:var(--borde);border-radius:14px;padding:12px 16px;font-weight:700;color:var(--tinta);margin-top:14px}
+[hidden]{display:none!important}
+.wa{display:none}
+@media (max-width:900px){.ap-g{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-pagina="aprobar" class="cargando">
+<main>
+<section class="seccion" style="padding-top:20px">
+  <div class="env">
+    <div class="ap-c" id="sin" hidden><h1>Abre el enlace completo</h1><p>Este enlace no trae ningún diseño. Ábrelo otra vez desde el mensaje de WhatsApp o escríbenos al 321 280 8077.</p></div>
+    <div class="ap-g" id="con" hidden>
+      <div class="ap-foto"><img id="foto" alt="Tu diseño solo y puesto en el producto"><p id="foto-n"></p></div>
+      <div class="ap-c">
+        <span class="codigo" id="codigo"></span>
+        <h1 id="titulo">Aprueba tu diseño</h1>
+        <p>Míralo con calma. Empezamos a producir cuando nos digas que sí.</p>
+        <dl id="datos"></dl>
+        <div id="aprobar">
+          <label class="rev"><input type="checkbox" id="reviso"><span>Revisé las letras y los nombres, los colores, el tamaño, la ubicación, las tallas y las cantidades.</span></label>
+          <label class="et" for="quien">Tu nombre</label><input type="text" id="quien" maxlength="60" autocomplete="name">
+          <div class="ap-b" style="margin-top:16px"><button type="button" class="btn verde" id="si" disabled>Aprobar el diseño <i>✓</i></button><button type="button" class="btn blanco" id="no">Quiero un cambio <i>✎</i></button></div>
+        </div>
+        <div id="cambio" hidden>
+          <label class="et" for="que">¿Qué cambiamos?</label><textarea id="que" rows="4" maxlength="500" placeholder="Ej.: el nombre más grande y en rojo"></textarea>
+          <div class="ap-b" style="margin-top:12px"><button type="button" class="btn" id="env-c" disabled>Enviar el cambio <i>→</i></button><button type="button" class="btn blanco" id="volver">← Volver</button></div>
+        </div>
+        <p class="ap-listo" id="listo" hidden></p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<script src="assets/datos.js?v=9697eb6b"></script>
+<script src="assets/sitio.js?v=07cb5421"></script>
+<script>
+(() => {
+  const $ = x => document.getElementById(x), WA = window.TRANSFER.WA;
+  const m = location.hash.match(/#d=([\w-]+)(?:&i=([wj])([\w-]+))?/), de = s => atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+  let d = null; try { d = JSON.parse(decodeURIComponent(escape(de(m[1])))); } catch (e) {}
+  if (!d || !d.c) { $('sin').hidden = false; return; }
+  $('con').hidden = false;
+  const txt = v => String(v || '').slice(0, 400);
+  $('codigo').textContent = txt(d.c); document.title = 'Aprueba tu diseño ' + txt(d.c) + ' · Tránsfer!';
+  if (d.n) { $('titulo').textContent = txt(d.n).split(' ')[0] + ', aprueba tu diseño'; $('quien').value = txt(d.n).slice(0, 60); }
+  [['Producto', d.p], ['Color', d.k], ['Cantidad', d.q], ['Tamaño del diseño', d.m]].forEach(([a, b]) => { if (!b) return; const t = document.createElement('dt'), v = document.createElement('dd'), w = document.createElement('div'); t.textContent = a; v.textContent = txt(b); w.append(t, v); $('datos').append(w); });
+  // En el mismo equipo del taller se ve la hoja completa; en el del cliente, la vista pequeña que viaja en el enlace
+  let img = ''; try { img = (JSON.parse(localStorage.getItem('transfer-aprob-img')) || {})[d.c] || ''; } catch (e) {}
+  if (/^data:image\/(webp|png|jpeg);base64,/.test(img)) { $('foto').src = img; $('foto-n').hidden = true; }
+  else if (m[2]) { $('foto').src = 'data:image/' + (m[2] === 'w' ? 'webp' : 'jpeg') + ';base64,' + m[3].replace(/-/g, '+').replace(/_/g, '/'); $('foto-n').textContent = 'Vista pequeña. En la imagen que te enviamos por WhatsApp lo ves en grande.'; }
+  else { $('foto').hidden = true; $('foto-n').textContent = 'Mira el diseño en la imagen que te enviamos por WhatsApp.'; }
+  const habil = () => { $('si').disabled = !($('reviso').checked && $('quien').value.trim().length > 2); };
+  $('reviso').addEventListener('change', habil); $('quien').addEventListener('input', habil);
+  const enviar = (t, aviso) => { window.open(WA + encodeURIComponent(t), '_blank', 'noopener'); $('listo').hidden = false; $('listo').textContent = aviso; $('listo').scrollIntoView({block: 'nearest'}); };
+  const hora = () => new Date().toLocaleString('es-CO', {dateStyle: 'long', timeStyle: 'short'});
+  $('si').addEventListener('click', () => enviar(`Apruebo el diseño *${txt(d.c)}* (${txt(d.p)}, color ${txt(d.k)}, ${txt(d.q)}).\n\nRevisé letras, nombres, colores, tamaño, ubicación, tallas y cantidades.\nNombre: ${$('quien').value.trim()}\nFecha: ${hora()}`, 'Se abrió WhatsApp con tu aprobación. Envía el mensaje para que nos llegue.'));
+  $('no').addEventListener('click', () => { $('aprobar').hidden = true; $('cambio').hidden = false; $('que').focus(); });
+  $('volver').addEventListener('click', () => { $('aprobar').hidden = false; $('cambio').hidden = true; });
+  $('que').addEventListener('input', () => { $('env-c').disabled = $('que').value.trim().length < 4; });
+  $('env-c').addEventListener('click', () => enviar(`Quiero un cambio en el diseño *${txt(d.c)}*:\n\n${$('que').value.trim()}\n\n${$('quien').value.trim() ? 'Nombre: ' + $('quien').value.trim() : ''}`, 'Se abrió WhatsApp con tu cambio. Envía el mensaje para que nos llegue.'));
+})();
+</script>
+</body>
+</html>

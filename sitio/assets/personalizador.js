@@ -9,12 +9,19 @@
   const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const cm = n => n.toFixed(1).replace('.', ',');
 
-  const {PRENDAS, vistaDe, vistasDe, areaDe, svgDe: dibujo, imgDeSvg, oscuro, tiposDe, fondoDe} = window.TR_PRENDAS;   // dibujo de prendas: assets/prendas.js
+  const {PRENDAS, vistaDe: vistaBase, vistasDe: vistasBase, areaDe, svgDe: dibujo, imgDeSvg, oscuro, tiposDe, fondoDe, vistaTalla, medidaDe} = window.TR_PRENDAS;   // dibujo de prendas: assets/prendas.js
   const {producto: prodDe, pesos, unidad, textoBaja} = window.TR_DATOS;   // precios y colores reales: assets/datos.js
   // Cada prenda tiene uno o varios tipos (por ejemplo, 3 camisetas), y cada tipo es un producto con su precio
   const tipo = () => tiposDe(S.prod).find(x => x.id === S.tipo) || tiposDe(S.prod)[0];
   const colores = () => tipo().colores;
-  const svgDe = (p, v, capa, color) => dibujo(p, v, capa, color, p === S.prod ? tipo().id : undefined);
+  // La vista, la guía y el dibujo dependen de la talla que se esté viendo (S.talla)
+  const tallaV = () => PRENDAS[S.prod].tallas ? S.talla : undefined;
+  const vistaDe = (p, v) => p === S.prod ? vistaTalla(p, v, tipo().id, tallaV()) : vistaBase(p, v);
+  const vistasDe = P => vistasBase(P).map(([k]) => [k, vistaDe(S.prod, k)]);
+  const svgDe = (p, v, capa, color) => p === S.prod ? dibujo(p, v, capa, color, tipo().id, tallaV()) : dibujo(p, v, capa, color);
+  const enTalla = (t, fn) => { const a = S.talla; S.talla = t; try { return fn(); } finally { S.talla = a; } };
+  const tallasPedido = () => { const P = PRENDAS[S.prod]; if (!P.tallas) return [null]; const l = S.modo === 'nombres' ? P.tallas.filter(t => S.nombres.some(n => n.nombre.trim() && n.talla === t)) : P.tallas.filter(t => S.tallas[t] > 0); return l.length ? l : [S.talla]; };
+  const medCm = v => `${cm(v.cm)} × ${cm(v.cm * areaDe(v)[3] / areaDe(v)[2])} cm`;
   const dosLados = () => !!tipo().dos && ['frente', 'espalda'].every(k => (S.capas[k] || []).length);
   const precioU = () => unidad(tipo(), {dosLados: dosLados(), total: totalUnidades()});
 
@@ -60,14 +67,14 @@
   const IMGS = {};       // id -> {src, sinFondo, w, h, nombre, archivo}
   const STICKERS = ['estrella', 'rompecabezas', 'navidad', 'mascota', 'gorra', 'taza', 'trio', 'camion', 'lapiz', 'manos'];
   STICKERS.forEach(n => { IMGS['st:' + n] = {src: '../img/ilus/' + n + '.webp', nombre: 'Sticker ' + n, sticker: true}; });
-  const S = {prod: 'buzo', tipo: 'buzo', color: '#1D3C78', vista: 'frente', capas: {}, sel: null, guias: true, modo: 'tallas', tallas: {M: 1}, cant: 1, nombres: [{nombre: '', talla: 'M'}], notas: '', cliente: '', ciudad: '', otro: null};   // otro: null o el texto del color que no está en la lista
+  const S = {prod: 'buzo', tipo: 'buzo', talla: 'M', color: '#1D3C78', vista: 'frente', capas: {}, sel: null, guias: true, modo: 'tallas', tallas: {M: 1}, cant: 1, nombres: [{nombre: '', talla: 'M'}], notas: '', cliente: '', ciudad: '', otro: null};   // otro: null o el texto del color que no está en la lista
   let hist = [], hi = -1, codigo = null;
   const capasVista = (v = S.vista) => (S.capas[v] ||= []);
   const nuevoId = () => 'e' + Math.random().toString(36).slice(2, 8);
   const vista0 = () => vistasDe(PRENDAS[S.prod])[0][0];
   const vistaBuena = () => { const v = vistaDe(S.prod, S.vista); if (!v || v.soloDibujo) S.vista = vista0(); };
   // El tipo siempre es de la prenda escogida, y el color, uno de los que se manejan en ese tipo (salvo «Otro»)
-  const tipoBueno = () => { S.tipo = tipo().id; if (S.otro === null && !colores().some(c => c[1] === S.color)) S.color = colores()[0][1]; };
+  const tipoBueno = () => { S.tipo = tipo().id; if (PRENDAS[S.prod].tallas && !PRENDAS[S.prod].tallas.includes(S.talla)) S.talla = 'M'; if (S.otro === null && !colores().some(c => c[1] === S.color)) S.color = colores()[0][1]; };
   const claro = hex => { const n = parseInt(hex.slice(1), 16); return (.299 * (n >> 16 & 255) + .587 * (n >> 8 & 255) + .114 * (n & 255)) / 255 > .6; };
   const colorNombre = () => { const l = (colores().find(c => c[1] === S.color) || [])[0]; if (S.otro === null) return l || S.color.toUpperCase(); const t = S.otro.trim(), m = PRENDAS[S.prod].tecnica === 'DTF' ? ` (muestra ${S.color.toUpperCase()})` : ''; return `Otro: ${t || 'por definir'}${m}, por confirmar`; };
   // El mug y el termo se diseñan extendidos (vista «vuelta»). Al pasar de una prenda a un mug, o al abrir un diseño viejo, se copia lo que había.
@@ -91,7 +98,7 @@
   function guardarBorrador() {
     const usadas = new Set(Object.values(S.capas).flat().filter(e => e.img && !e.img.startsWith('st:')).map(e => e.img));
     const imgs = {}; usadas.forEach(id => { if (IMGS[id]) imgs[id] = {src: IMGS[id].src, w: IMGS[id].w, h: IMGS[id].h, nombre: IMGS[id].nombre}; });
-    const b = {prod: S.prod, tipo: S.tipo, color: S.color, otro: S.otro, vista: S.vista, capas: S.capas, modo: S.modo, tallas: S.tallas, cant: S.cant, nombres: S.nombres, notas: S.notas, imgs};
+    const b = {prod: S.prod, tipo: S.tipo, talla: S.talla, color: S.color, otro: S.otro, vista: S.vista, capas: S.capas, modo: S.modo, tallas: S.tallas, cant: S.cant, nombres: S.nombres, notas: S.notas, imgs};
     if (!guardarLS('transfer-editor', b)) { b.imgs = {}; guardarLS('transfer-editor', b); }
   }
 
@@ -115,7 +122,7 @@
   // El escenario mantiene siempre la proporcion de la prenda: asi el area de impresion coincide con la ficha
   function ajustarEscena() {
     const col = escena.parentElement, ar = +escena.dataset.ar || 1, movil = matchMedia('(max-width:1080px)').matches;
-    const W = col.clientWidth - 28, Hmax = movil ? innerHeight * (PRENDAS[S.prod].vistas.vuelta ? .23 : .31) : innerHeight - (PRENDAS[S.prod].vistas.vuelta ? 400 : 230);
+    const W = col.clientWidth - 28, Hmax = movil ? innerHeight * (PRENDAS[S.prod].vistas.vuelta ? .23 : .29) : innerHeight - (PRENDAS[S.prod].vistas.vuelta ? 400 : 270);
     escena.style.width = Math.max(200, Math.min(W, Math.max(movil ? 180 : 300, Hmax) * ar)) + 'px';
   }
   addEventListener('resize', () => { ajustarEscena(); actualizarMarco(); });
@@ -151,8 +158,19 @@
     const v = vistaDe(S.prod, S.vista), [, , aw, ah] = areaDe(v);
     $('#estado-esc').innerHTML = fuera.length ? '<b class="alerta">Una parte del diseño queda fuera del área de impresión. Muévelo o hazlo más pequeño.</b>'
       : sangra && capasVista().length ? `El diseño cubre ${PRENDAS[S.prod].art} completo, de borde a borde (${cm(v.cm)} × ${cm(v.cm * ah / aw)} cm). Puedes pasarte del borde: lo que sobra se corta ahí.`
-      : (capasVista().length ? `Área de impresión de ${PRENDAS[S.prod].nombre.toLowerCase()} · ${vistaDe(S.prod, S.vista).nombre.toLowerCase()}: ${cm(v.cm)} × ${cm(v.cm * ah / aw)} cm. Arrastra para mover.` : 'Agrega un texto, tu logo o un sticker desde el paso 2.');
+      : (capasVista().length ? `${v.talla ? `<b>Talla ${v.talla}</b> · prenda ${v.prenda[0]} × ${v.prenda[1]} cm · ` : ''}guía ${cm(v.cm)} × ${cm(v.cm * ah / aw)} cm · <b>tu diseño: ${medidaDiseno(S.vista)}</b>` : 'Agrega un texto, tu logo o un sticker desde el paso 2.');
   }
+
+  // Caja que ocupa el diseño de una vista, en fracciones del área de impresión
+  const arDe = el => el.tipo === 'texto' ? (c => c.height / c.width)(canvasTexto(el)) : (IMGS[el.img]?.w ? IMGS[el.img].h / IMGS[el.img].w : (el._ar || 1));
+  function cajaDiseno(k) {
+    const l = S.capas[k] || []; if (!l.length) return null;
+    const v = vistaDe(S.prod, k), [, , aw, ah] = areaDe(v), xs = [], ys = [];
+    l.forEach(el => { const w = el.w * aw, h = w * arDe(el), r = el.rot * Math.PI / 180; [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([a, b]) => { const px = a * w / 2, py = b * h / 2; xs.push(el.x + (px * Math.cos(r) - py * Math.sin(r)) / aw); ys.push(el.y + (px * Math.sin(r) + py * Math.cos(r)) / ah); }); });
+    return {x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys)};
+  }
+  function tamDiseno(k) { const b = cajaDiseno(k); if (!b) return null; const v = vistaDe(S.prod, k), [, , aw, ah] = areaDe(v); return v.sangrado ? [v.cm, v.cm * ah / aw] : [(b.x1 - b.x0) * v.cm, (b.y1 - b.y0) * v.cm * ah / aw]; }
+  const medidaDiseno = k => { const t = tamDiseno(k); return t ? `${cm(t[0])} × ${cm(t[1])} cm` : ''; };
 
   /* ═════════ Arrastrar, girar y cambiar tamaño ═════════ */
   let accion = null;
@@ -206,7 +224,7 @@
 
   /* ═════════ Paso 1: producto y color ═════════ */
   function panelProducto() {
-    $('#prods-p').innerHTML = Object.entries(PRENDAS).map(([k, p]) => `<button type="button" data-p="${k}" class="${k === S.prod ? 'on' : ''}" aria-pressed="${k === S.prod}"><span class="ico-p">${svgDe(k, 'frente', 'base', '#E6E0D2')}</span><b>${p.corto || p.nombre}</b><small>Desde ${pesos(Math.min(...tiposDe(k).map(x => x.precio)))}</small></button>`).join('');
+    $('#prods-p').innerHTML = Object.entries(PRENDAS).map(([k, p]) => `<button type="button" data-p="${k}" class="${k === S.prod ? 'on' : ''}" aria-pressed="${k === S.prod}"><span class="ico-p">${dibujo(k, 'frente', 'base', '#E6E0D2', k === S.prod ? tipo().id : undefined)}</span><b>${p.corto || p.nombre}</b><small>Desde ${pesos(Math.min(...tiposDe(k).map(x => x.precio)))}</small></button>`).join('');
     const P = PRENDAS[S.prod], T1 = tipo(), varios = tiposDe(S.prod);
     $('#tipos-p').hidden = varios.length < 2; $('#tipos-p').innerHTML = varios.map(x => `<button type="button" data-t="${x.id}" class="${x.id === T1.id ? 'on' : ''}" aria-pressed="${x.id === T1.id}"><b>${x.corto}</b><small>${pesos(x.precio)}</small></button>`).join('');
     $('#colores-p').innerHTML = colores().map(([n, h]) => `<button type="button" style="--c:${h}" data-c="${h}" class="${h === S.color && S.otro === null ? 'on' : ''}" aria-label="${n}" title="${n}"></button>`).join('') + `<button type="button" class="otro-c${S.otro !== null ? ' on' : ''}" data-otro aria-pressed="${S.otro !== null}"><i></i>Otro</button>`;
@@ -215,8 +233,13 @@
     $('#color-nombre').textContent = S.otro === null ? colorNombre() : 'Otro';
     const precios = `<b>${T1.nombre}: ${pesos(T1.precio)}${T1.dos ? ` por un lado y ${pesos(T1.dos)} por los dos` : ''}.</b> ${T1.baja ? textoBaja(T1) + '. ' : ''}Nombres y diseño sin costo.<br>`;
     $('#info-tec').innerHTML = precios + (P.tecnica === 'DTF'
-      ? `<b>Estampado DTF.</b> Funciona en tela clara u oscura y a todo color. ${P.tallas ? 'El tamaño máximo depende de la talla; estas medidas son de referencia' : 'Medida de referencia'}: ${vistasDe(P).map(([, v]) => `${v.nombre.toLowerCase()} ${cm(v.cm)} × ${cm(v.cm * areaDe(v)[3] / areaDe(v)[2])} cm`).join(' · ')}.`
+      ? `<b>Estampado DTF.</b> Funciona en tela clara u oscura y a todo color. ${P.tallas ? `En talla ${S.talla} la guía es` : 'Medida de referencia'}: ${vistasDe(P).map(([, v]) => `${v.nombre.toLowerCase()} ${medCm(v)}`).join(' · ')}.`
       : `<b>Sublimación.</b> El diseño queda dentro del material. Puede cubrirlo todo${S.prod === 'mug' ? ', de asa a asa' : ''}: ${cm(P.vistas.vuelta.cm)} × ${cm(P.vistas.vuelta.cm * P.vistas.vuelta.area[3] / P.vistas.vuelta.area[2])} cm.`);
+    tablaMedidas();
+  }
+  function tablaMedidas() {
+    const P = PRENDAS[S.prod], c = $('#tabla-medidas'); c.hidden = !P.tallas; if (!P.tallas) return;
+    $('#tabla-m').innerHTML = `<tr><th>Talla</th><th>Prenda<small>ancho × largo</small></th>${vistasDe(P).map(([, v]) => `<th>Guía ${v.nombre.toLowerCase()}<small>ancho × alto</small></th>`).join('')}</tr>` + P.tallas.map(t => enTalla(t, () => { const l = vistasDe(P); return `<tr class="${t === S.talla ? 'on' : ''}"><td><b>${t}</b></td><td>${l[0][1].prenda.join(' × ')}</td>${l.map(([, v]) => `<td>${medCm(v).replace(/,0/g, '').replace(' cm', '')}</td>`).join('')}</tr>`; })).join('');
   }
   $('#tipos-p').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.tipo = b.dataset.t; tipoBueno(); renderEscena(); panelProducto(); vistasBar(); panelTallas(); guardarHist(); });
   $('#prods-p').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cambiarProducto(b.dataset.p); });
@@ -238,7 +261,10 @@
     if ($('#precio-p')) pintarTotal();
     const P = PRENDAS[S.prod];
     $('#vistas').classList.toggle('una', vistasDe(P).length === 1); $('#vistas').innerHTML = vistasDe(P).map(([k, v]) => `<button type="button" data-v="${k}" class="${k === S.vista ? 'on' : ''}">${v.nombre}${(S.capas[k] || []).length ? `<i>${S.capas[k].length}</i>` : ''}</button>`).join('');
+    const te = $('#tallas-esc'); te.hidden = !P.tallas; if (P.tallas) te.innerHTML = `<span>Ver en talla</span>` + P.tallas.map(t => `<button type="button" data-ver="${t}" class="${t === S.talla ? 'on' : ''}" aria-pressed="${t === S.talla}">${t}${S.modo === 'tallas' && S.tallas[t] > 0 ? `<i>${S.tallas[t]}</i>` : ''}</button>`).join('');
   }
+  function verTalla(t) { if (!PRENDAS[S.prod].tallas?.includes(t) || t === S.talla) return; S.talla = t; renderEscena(); vistasBar(); panelProducto(); medidas(); guardarBorrador(); }
+  $('#tallas-esc').addEventListener('click', e => { const b = e.target.closest('[data-ver]'); if (b) verTalla(b.dataset.ver); });
   $('#vistas').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.vista = b.dataset.v; S.sel = null; todo(); guardarBorrador(); });
 
   /* ═════════ Paso 2: diseño ═════════ */
@@ -255,7 +281,7 @@
       const id = 'im' + Math.random().toString(36).slice(2, 8);
       IMGS[id] = {src: lector.result, w: im.naturalWidth, h: im.naturalHeight, nombre: f.name, archivo: f, svg: f.type.includes('svg')};
       if (reemplazar) { const el = elSel(); el.img = id; el.sinFondo = false; renderCapas(); panelEl(); guardarHist(); }
-      else { const v = vistaDe(S.prod, S.vista), [, , aw, ah] = areaDe(v); agregar({id: nuevoId(), tipo: 'imagen', img: id, x: .5, y: v.sangrado ? .5 : .42, w: v.sangrado ? Math.min(.55, .9 * ah / aw * im.naturalWidth / im.naturalHeight) : .55, rot: 0, sinFondo: false}); }
+      else { Object.keys(S.capas).forEach(k => { S.capas[k] = S.capas[k].filter(e => !(e.defecto && e.texto === 'TU NOMBRE')); }); const v = vistaDe(S.prod, S.vista), [, , aw, ah] = areaDe(v); agregar({id: nuevoId(), tipo: 'imagen', img: id, x: .5, y: v.sangrado ? .5 : .42, w: v.sangrado ? Math.min(.55, .9 * ah / aw * im.naturalWidth / im.naturalHeight) : .55, rot: 0, sinFondo: false}); }
     }; im.src = lector.result; };
     lector.readAsDataURL(f);
   }
@@ -299,7 +325,8 @@
       const [cl, tx] = ppp >= 200 ? ['ok', 'Calidad excelente'] : ppp >= 130 ? ['ok', 'Buena calidad'] : ppp >= 90 ? ['med', 'Calidad regular: puede verse un poco borrosa'] : ['mal', 'Calidad baja: se verá pixelada. Usa una imagen más grande o redúcela'];
       q = `<span class="calidad ${cl}">${tx} · ${ppp} ppp</span>`;
     }
-    m.innerHTML = `Medida: <b>${cm(wcm)} × ${cm(hcm)} cm</b>${q}`;
+    const P = PRENDAS[S.prod], otras = P.tallas ? `<span class="por-talla">${P.tallas.map(t => enTalla(t, () => { const x = vistaDe(S.prod, S.vista); return `<span class="${t === S.talla ? 'on' : ''}"><b>${t}</b> ${cm(el.w * x.cm)} × ${cm(el.w * x.cm * (el._ar || 1))}</span>`; })).join('')}</span>` : '';
+    m.innerHTML = `Medida${P.tallas ? ' en talla ' + S.talla : ''}: <b>${cm(wcm)} × ${cm(hcm)} cm</b>${q}${otras}`;
   }
   const otroTinta = c => `<label class="otro-c${TINTAS.some(t => t[1].toLowerCase() === c.toLowerCase()) ? '' : ' on'}"><i></i>Otro<input type="color" value="${c}" aria-label="Otro color"></label>`;
   function panelEl() {
@@ -327,7 +354,7 @@
   const box = $('#editor-el');
   box.addEventListener('input', e => {
     const el = elSel(); if (!el) return; const t = e.target;
-    if (t.id === 't-texto') el.texto = t.value;
+    if (t.id === 't-texto') { el.texto = t.value; delete el.defecto; }
     else if (t.id === 't-w') el.w = t.value / 100;
     else if (t.id === 't-rot') { el.rot = +t.value; t.nextElementSibling.textContent = t.value + '°'; }
     else if (t.id === 't-curva') { el.curva = +t.value; t.nextElementSibling.textContent = t.value; }
@@ -366,7 +393,7 @@
     const P = PRENDAS[S.prod], c = $('#tallas-c');
     if (!P.tallas) c.innerHTML = `<label class="et">Cantidad</label><div class="paso-n" data-k="cant"><button type="button" data-d="-1" aria-label="Menos">−</button><input type="number" min="1" value="${S.cant}" aria-label="Cantidad"><button type="button" data-d="1" aria-label="Más">+</button></div>`;
     else c.innerHTML = `<div class="modos"><button type="button" data-m="tallas" class="${S.modo === 'tallas' ? 'on' : ''}">Tallas y cantidades</button><button type="button" data-m="nombres" class="${S.modo === 'nombres' ? 'on' : ''}">Un nombre por prenda</button></div>` +
-      (S.modo === 'tallas' ? `<div class="tallas-g">${P.tallas.map(t => `<div><b>${t}</b><div class="paso-n" data-k="${t}"><button type="button" data-d="-1" aria-label="Menos ${t}">−</button><input type="number" min="0" value="${S.tallas[t] || 0}" aria-label="Cantidad ${t}"><button type="button" data-d="1" aria-label="Más ${t}">+</button></div></div>`).join('')}</div>`
+      (S.modo === 'tallas' ? `<div class="tallas-g">${P.tallas.map(t => `<div><b>${t}</b><div class="paso-n" data-k="${t}"><button type="button" data-d="-1" aria-label="Menos ${t}">−</button><input type="number" min="0" value="${S.tallas[t] || 0}" aria-label="Cantidad ${t}"><button type="button" data-d="1" aria-label="Más ${t}">+</button></div><small>${enTalla(t, () => Object.keys(S.capas).filter(k => vistaDe(S.prod, k) && !vistaDe(S.prod, k).soloDibujo && (S.capas[k] || []).length).map(k => `${vistaDe(S.prod, k).nombre} ${medidaDiseno(k)}`).join('<br>')) || 'Sin diseño'}</small></div>`).join('')}</div>`
       : `<p class="ayuda-p">Cada prenda sale con su nombre. ${Object.values(S.capas).flat().some(e => e.variable) ? '' : '<b>Ojo:</b> marca un texto como «Cambia en cada prenda» en el paso 2, o usa la plantilla «Nombre y número».'}</p>
         <div class="nombres-t">${S.nombres.map((n, i) => `<div class="fila-n"><span>${i + 1}</span><input value="${esc(n.nombre)}" data-i="${i}" placeholder="Nombre" maxlength="24" aria-label="Nombre ${i + 1}"><select data-i="${i}" aria-label="Talla ${i + 1}">${P.tallas.map(t => `<option ${t === n.talla ? 'selected' : ''}>${t}</option>`).join('')}</select><button type="button" data-borrar="${i}" aria-label="Quitar">×</button></div>`).join('')}</div>
         <div class="acciones-el"><button type="button" id="mas-nombre">+ Agregar persona</button><button type="button" id="pegar-lista">Pegar una lista</button></div>
@@ -382,7 +409,7 @@
   const tc = $('#tallas-c');
   tc.addEventListener('click', e => {
     const m = e.target.closest('[data-m]'); if (m) { S.modo = m.dataset.m; panelTallas(); guardarBorrador(); return; }
-    const d = e.target.closest('[data-d]'); if (d) { const k = d.closest('.paso-n').dataset.k, inp = d.parentNode.querySelector('input'); const v = Math.max(k === 'cant' ? 1 : 0, (+inp.value || 0) + +d.dataset.d); inp.value = v; if (k === 'cant') S.cant = v; else S.tallas[k] = v; panelTallas(); guardarBorrador(); return; }
+    const d = e.target.closest('[data-d]'); if (d) { const k = d.closest('.paso-n').dataset.k, inp = d.parentNode.querySelector('input'); const v = Math.max(k === 'cant' ? 1 : 0, (+inp.value || 0) + +d.dataset.d); inp.value = v; if (k === 'cant') S.cant = v; else { S.tallas[k] = v; if (v) verTalla(k); } panelTallas(); vistasBar(); guardarBorrador(); return; }
     const b = e.target.closest('[data-borrar]'); if (b) { S.nombres.splice(+b.dataset.borrar, 1); if (!S.nombres.length) S.nombres.push({nombre: '', talla: 'M'}); panelTallas(); renderCapas(); guardarBorrador(); return; }
     if (e.target.id === 'mas-nombre') { S.nombres.push({nombre: '', talla: S.nombres.at(-1)?.talla || 'M'}); panelTallas(); $$('.fila-n input').at(-1).focus(); }
     if (e.target.id === 'pegar-lista') { const t = $('#lista-n'); t.hidden = !t.hidden; t.focus(); }
@@ -394,7 +421,7 @@
   });
   tc.addEventListener('change', e => {
     const t = e.target;
-    if (t.matches('.fila-n select')) { S.nombres[+t.dataset.i].talla = t.value; pintarTotal(); guardarBorrador(); }
+    if (t.matches('.fila-n select')) { S.nombres[+t.dataset.i].talla = t.value; verTalla(t.value); pintarTotal(); guardarBorrador(); }
     if (t.id === 'lista-n') { const P = PRENDAS[S.prod]; const filas = t.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [n, ta] = l.split(/[,;\t]/).map(s => s.trim()); return {nombre: n, talla: P.tallas.find(x => x.toUpperCase() === (ta || '').toUpperCase()) || (/^ni[nñ]/i.test(ta || '') ? 'Niño' : 'M')}; });
       if (filas.length) { S.nombres = S.nombres.filter(n => n.nombre.trim()).concat(filas); panelTallas(); renderCapas(); guardarBorrador(); aviso(filas.length + ' nombres agregados.'); } }
   });
@@ -406,23 +433,28 @@
     const P = PRENDAS[S.prod], color = colorNombre();
     const vistas = vistasDe(P).filter(([k]) => (S.capas[k] || []).length);
     const lineasVista = vistas.map(([k, v]) => {
-      const [ax, ay, aw, ah] = areaDe(v), ucm = aw / v.cm;
+      const [ax, ay, aw, ah] = areaDe(v);
       return {vista: v.nombre + (v.sangrado ? ` (extendido, ${cm(v.cm)} × ${cm(v.cm * ah / aw)} cm, de borde a borde)` : ''), items: S.capas[k].slice().reverse().map(el => {
-        const ar = el.tipo === 'texto' ? (c => c.height / c.width)(canvasTexto(el)) : (IMGS[el.img]?.w ? IMGS[el.img].h / IMGS[el.img].w : (el._ar || 1));
+        const ar = arDe(el);
+        const en = t => enTalla(t ?? S.talla, () => { const v = vistaDe(S.prod, k), [ax, ay, aw, ah] = areaDe(v), ucm = aw / v.cm;
         const wcm = el.w * v.cm, hcm = wcm * ar, dx = (el.x - .5) * v.cm, top = (el.y * ah - hcm * ucm / 2) / ucm;
         const pos = (Math.abs(dx) < .4 ? 'centrado' : `${cm(Math.abs(dx))} cm a la ${dx < 0 ? 'izquierda' : 'derecha'} del centro`) + (v.sangrado ? (S.prod === 'mug' ? ' (el centro es el frente, opuesto al asa)' : ' (el centro es el frente)') : '') + (v.cuello ? `, a ${cm(top + (ay - v.cuello) / ucm)} cm del cuello` : (top < 0 ? `, pasa ${cm(-top)} cm el borde superior (se corta ahí)` : `, a ${cm(top)} cm del borde superior`)) + (el.rot ? `, girado ${el.rot}°` : '');
-        if (el.tipo === 'texto') { const f = FUENTES[el.fuente]; return `${el.variable ? `Nombre de cada persona (misma altura de letra; el ancho es el del nombre más largo, «${nombreMasLargo(el)}»)` : `Texto «${el.texto.replace(/\n/g, ' / ')}»`} · letra ${f.nombre} · color ${nombreTinta(el.color)} (${el.color.toUpperCase()})${el.contorno ? ` · contorno ${nombreTinta(el.colorBorde)} grosor ${el.grosor}` : ''}${el.curva ? ` · en curva (${el.curva})` : ''} · ${cm(wcm)} × ${cm(hcm)} cm · ${pos}`; }
+        return `${t ? `talla ${t}: ` : ''}${cm(wcm)} × ${cm(hcm)} cm, ${pos}`; });
+        const med = tallasPedido().map(en).join(' · ');
+        if (el.tipo === 'texto') { const f = FUENTES[el.fuente]; return `${el.variable ? `Nombre de cada persona (misma altura de letra; el ancho es el del nombre más largo, «${nombreMasLargo(el)}»)` : `Texto «${el.texto.replace(/\n/g, ' / ')}»`} · letra ${f.nombre} · color ${nombreTinta(el.color)} (${el.color.toUpperCase()})${el.contorno ? ` · contorno ${nombreTinta(el.colorBorde)} grosor ${el.grosor}` : ''}${el.curva ? ` · en curva (${el.curva})` : ''} · ${med}`; }
         const i = IMGS[el.img] || {};
-        if (i.sticker) return `${i.nombre} · ${cm(wcm)} × ${cm(hcm)} cm · ${pos}`;
-        const ppp = i.w ? Math.round(i.w / (wcm / 2.54)) : 0;
-        return `Imagen «${i.nombre}»${i.w ? ` (${i.w} × ${i.h} px, ${ppp} ppp)` : ''}${el.sinFondo ? ' · sin fondo blanco' : ''} · ${cm(wcm)} × ${cm(hcm)} cm · ${pos}`;
+        if (i.sticker) return `${i.nombre} · ${med}`;
+        const ppp = i.w ? Math.round(i.w / (Math.max(...tallasPedido().map(t => enTalla(t ?? S.talla, () => el.w * vistaDe(S.prod, k).cm))) / 2.54)) : 0;
+        return `Imagen «${i.nombre}»${i.w ? ` (${i.w} × ${i.h} px, ${ppp} ppp)` : ''}${el.sinFondo ? ' · sin fondo blanco' : ''} · ${med}`;
       })};
     });
     const cantidades = !P.tallas ? `${S.cant} ${S.cant === 1 ? 'unidad' : 'unidades'}` : S.modo === 'nombres'
       ? S.nombres.filter(n => n.nombre.trim()).map(n => `${n.nombre} (${n.talla})`).join(', ') || 'Sin nombres todavía'
       : Object.entries(S.tallas).filter(([, n]) => n > 0).map(([t, n]) => `${t} × ${n}`).join(', ') || 'Sin tallas todavía';
     const nU = totalUnidades(), vU = precioU();
-    return {codigo, producto: tipo().nombre, unidad: vU, valor: vU * nU, dos: dosLados(), color, tecnica: P.tecnica, total: totalUnidades(), cantidades, modoNombres: S.modo === 'nombres' && !!P.tallas, vistas: lineasVista, notas: S.notas.trim(), cliente: S.cliente.trim(), ciudad: S.ciudad.trim(),
+    const porTalla = !P.tallas ? [] : tallasPedido().map(t => enTalla(t, () => { const l = vistasDe(P).filter(([k]) => (S.capas[k] || []).length), n = S.modo === 'nombres' ? S.nombres.filter(x => x.nombre.trim() && x.talla === t).length : (S.tallas[t] || 0);
+      return {talla: t, n, prenda: vistasDe(P)[0][1].prenda, vistas: l.map(([k, v]) => ({nombre: v.nombre.toLowerCase(), guia: medCm(v), diseno: medidaDiseno(k)}))}; }));
+    return {porTalla, codigo, producto: tipo().nombre, unidad: vU, valor: vU * nU, dos: dosLados(), color, tecnica: P.tecnica, total: totalUnidades(), cantidades, modoNombres: S.modo === 'nombres' && !!P.tallas, vistas: lineasVista, notas: S.notas.trim(), cliente: S.cliente.trim(), ciudad: S.ciudad.trim(),
       archivos: vistas.flatMap(([k]) => S.capas[k]).filter(e => e.img && IMGS[e.img] && !IMGS[e.img].sticker).map(e => IMGS[e.img])};
   }
   function textoWA(f) {
@@ -496,33 +528,88 @@
       caja.replaceChildren(...fotos.map((c, i) => { const f = document.createElement('figure'), p = document.createElement('figcaption'); p.textContent = lados[i].n; f.append(c, p); return f; }));
     }, 130);
   }
+  // Solo el diseño, recortado a lo que ocupa y sobre el color de la prenda
+  async function disenoSolo(k, ancho, alto) {
+    const v = vistaDe(S.prod, k), [ax, ay, aw, ah] = areaDe(v), b = v.sangrado ? {x0: 0, x1: 1, y0: 0, y1: 1} : cajaDiseno(k), m = v.sangrado ? 0 : .05 * (b.x1 - b.x0) * aw;
+    const bx = ax + b.x0 * aw - m, by = ay + b.y0 * ah - m, bw = (b.x1 - b.x0) * aw + 2 * m, bh = (b.y1 - b.y0) * ah + 2 * m, s = Math.min(ancho / bw, alto / bh);
+    const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(bw * s)); c.height = Math.max(1, Math.round(bh * s));
+    const x = c.getContext('2d'); x.fillStyle = fondoDe(S.prod, S.color, S.tipo); x.fillRect(0, 0, c.width, c.height); x.scale(s, s); x.translate(-bx, -by); await dibujarCapas(x, k);
+    return {c, nombre: v.sangrado ? 'Diseño completo' : 'Diseño del ' + (k === 'espalda' ? 'reverso (espalda)' : 'frente'), medida: (tallasPedido()[0] ? `Talla ${tallasPedido()[0]}: ` : '') + enTalla(tallasPedido()[0] ?? S.talla, () => medidaDiseno(k))};
+  }
+  const vistasConDiseno = () => vistasDe(PRENDAS[S.prod]).map(([k]) => k).filter(k => (S.capas[k] || []).length);
+  // Recuadro blanco con un dibujo centrado y su rótulo
+  function cuadro(x, img, px, py, w, h, rotulo, sub) {
+    x.fillStyle = '#fff'; x.strokeStyle = T; x.lineWidth = 3; x.beginPath(); x.roundRect(px, py, w, h, 22); x.fill(); x.stroke();
+    const pie = sub ? 78 : 50, k = Math.min((w - 28) / img.width, (h - pie - 22) / img.height), iw = img.width * k, ih = img.height * k;
+    x.drawImage(img, px + (w - iw) / 2, py + 14 + (h - pie - 22 - ih) / 2, iw, ih);
+    x.fillStyle = T; x.font = '900 22px Rubik'; x.fillText(rotulo.toUpperCase(), px + 20, py + h - (sub ? 46 : 20));
+    if (sub) { x.font = '700 20px Rubik'; x.fillStyle = '#B30A51'; x.fillText(sub, px + 20, py + h - 18); }
+  }
+  async function filaCuadros(x, piezas, pad, W, y, alto) {
+    const n = piezas.length, g = 26, w = (W - pad * 2 - (n - 1) * g) / n;
+    piezas.forEach((p, i) => cuadro(x, p.c, pad + i * (w + g), y, w, alto, p.nombre, p.medida));
+    return y + alto;
+  }
+  const estadoAprob = () => { const a = leerLS('transfer-aprobaciones', []).find(z => z.codigo === codigo); return a ? `${a.estado}${a.cliente ? ' · ' + a.cliente : ''} · ${new Date(a.cuando || a.fecha).toLocaleString('es-CO', {dateStyle: 'medium', timeStyle: 'short'})}` : 'Sin enviar al cliente'; };
   async function canvasFicha() {
     const f = ficha(), W = 1400, pad = 50;
     const info = await mockups(600), mocks = info.map(m => m.c);
-    const c = document.createElement('canvas'); c.width = W; c.height = 4000; const x = c.getContext('2d');
+    const c = document.createElement('canvas'); c.width = W; c.height = 7000; const x = c.getContext('2d');
     x.fillStyle = '#FBF6EC'; x.fillRect(0, 0, W, c.height);
     x.fillStyle = '#053468'; x.fillRect(0, 0, W, 120);
     x.fillStyle = '#FECF03'; x.font = '900 46px Rubik'; x.fillText('Tránsfer!', pad, 75);
     x.fillStyle = '#fff'; x.font = '700 22px Rubik'; x.fillText('Ficha de diseño para producción', pad + 250, 72);
     x.textAlign = 'right'; x.font = '900 34px Rubik'; x.fillStyle = '#FECF03'; x.fillText(f.codigo, W - pad, 62);
     x.font = '500 18px Rubik'; x.fillStyle = '#fff'; x.fillText(new Date().toLocaleString('es-CO', {dateStyle: 'long', timeStyle: 'short'}), W - pad, 92); x.textAlign = 'left';
-    const n = mocks.length, mw = Math.min(600, (W - pad * 2 - (n - 1) * 30) / n); let y = 160;
-    mocks.forEach((m, i) => { const mx = pad + i * (mw + 30), mh = mw * m.height / m.width;
-      x.fillStyle = '#fff'; x.strokeStyle = T; x.lineWidth = 3; x.beginPath(); x.roundRect(mx, y, mw, mh + 56, 22); x.fill(); x.stroke();
-      x.drawImage(m, mx + 10, y + 10, mw - 20, mh - 20 * mh / mw);
-      x.fillStyle = T; x.font = '900 22px Rubik'; x.fillText(info[i].nombre.toUpperCase() + (info[i].vacia ? ' · sin diseño' : ''), mx + 20, y + mh + 36); });
-    y += Math.max(...mocks.map(m => mw * m.height / m.width)) + 100;
+    let y = 160;
+    const solos = await Promise.all(vistasConDiseno().map(k => disenoSolo(k, 1300, 760)));
+    if (solos.length) { x.fillStyle = '#B30A51'; x.font = '900 24px Rubik'; x.fillText('EL DISEÑO', pad, y + 10); y = await filaCuadros(x, solos, pad, W, y + 30, 640) + 50; }
+    x.fillStyle = '#B30A51'; x.font = '900 24px Rubik'; x.fillText('EN EL PRODUCTO' + (PRENDAS[S.prod].tallas ? ` · VISTO EN TALLA ${S.talla.toUpperCase()}` : ''), pad, y + 10);
+    y = await filaCuadros(x, info.map(m => ({c: m.c, nombre: m.nombre + (m.vacia ? ' · sin diseño' : '')})), pad, W, y + 30, info.length > 2 ? 400 : 560) + 50;
     const ancho = W - pad * 2;
     const parrafo = (t, fuente, color, salto = 30) => { x.font = fuente; x.fillStyle = color; const pal = t.split(' '); let l = ''; for (const p of pal) { const prueba = l ? l + ' ' + p : p; if (x.measureText(prueba).width > ancho) { x.fillText(l, pad, y); y += salto; l = p; } else l = prueba; } if (l) { x.fillText(l, pad, y); y += salto; } };
     const titulo = t => { y += 14; x.fillStyle = '#B30A51'; x.font = '900 24px Rubik'; x.fillText(t.toUpperCase(), pad, y); y += 36; };
     titulo('Producto'); parrafo(`${f.producto} · color ${f.color}${S.otro === null ? ` (${S.color})` : ''} · técnica ${f.tecnica}`, '600 24px Rubik', T, 34);
     titulo(f.modoNombres ? `Nombres y tallas (${f.total})` : `Cantidad (${f.total})`); parrafo(f.cantidades, '500 22px Rubik', T, 32);
+    if (f.porTalla.length) { titulo('Medidas por talla (de referencia)'); f.porTalla.forEach(p => parrafo(`${p.talla}${p.n ? ' × ' + p.n : ''} · prenda ${p.prenda.join(' × ')} cm` + p.vistas.map(v => ` · ${v.nombre}: guía ${v.guia}, diseño ${v.diseno}`).join(''), '600 21px Rubik', T, 30)); }
     f.vistas.forEach(v => { titulo(v.vista); v.items.forEach((it, i) => parrafo(`${i + 1}. ${it}`, '500 21px Rubik', '#2E3850', 30)); });
+    titulo('Aprobación del cliente'); parrafo(estadoAprob(), '700 22px Rubik', T, 32);
     if (f.notas) { titulo('Notas del cliente'); parrafo(f.notas, '500 22px Rubik', T, 32); }
     if (f.cliente || f.ciudad) { titulo('Cliente'); parrafo([f.cliente, f.ciudad].filter(Boolean).join(' · '), '500 22px Rubik', T, 32); }
     if (f.archivos.length) { titulo('Archivos para pedir al cliente'); parrafo(f.archivos.map(a => a.nombre).join(', '), '500 21px Rubik', T, 30); }
     y += 20; x.fillStyle = '#053468'; x.fillRect(0, y, W, 70); x.fillStyle = '#fff'; x.font = '700 20px Rubik'; x.fillText('Tránsfer! · Piedecuesta, Santander · WhatsApp 321 280 8077 · Medidas y colores de referencia: se confirman antes de producir.', pad, y + 43); y += 70;
     const out = document.createElement('canvas'); out.width = W; out.height = y; out.getContext('2d').drawImage(c, 0, 0); return out;
+  }
+  async function canvasHoja(cliente) {
+    const f = ficha(), W = 1080, pad = 44, c = document.createElement('canvas'); c.width = W; c.height = 5000; const x = c.getContext('2d');
+    x.fillStyle = '#FBF6EC'; x.fillRect(0, 0, W, c.height); x.fillStyle = '#053468'; x.fillRect(0, 0, W, 130);
+    x.fillStyle = '#FECF03'; x.font = '900 50px Rubik'; x.fillText('Tránsfer!', pad, 82); x.textAlign = 'right'; x.font = '900 34px Rubik'; x.fillText(f.codigo, W - pad, 66);
+    x.fillStyle = '#fff'; x.font = '500 20px Rubik'; x.fillText(new Date().toLocaleString('es-CO', {dateStyle: 'long', timeStyle: 'short'}), W - pad, 100); x.textAlign = 'left';
+    let y = 196; x.fillStyle = '#053468'; x.font = '900 46px Rubik'; x.fillText((cliente ? cliente.split(' ')[0] + ', revisa' : 'Revisa') + ' y aprueba tu diseño', pad, y); y += 46;
+    x.fillStyle = '#2E3850'; x.font = '500 25px Rubik'; x.fillText('Empezamos a producir cuando nos digas que sí.', pad, y); y += 50;
+    const solos = await Promise.all(vistasConDiseno().map(k => disenoSolo(k, 1300, 900)));
+    for (const s of solos) { const h = Math.min(820, Math.max(360, (W - pad * 2 - 28) * s.c.height / s.c.width + 100)); cuadro(x, s.c, pad, y, W - pad * 2, h, s.nombre, s.medida); y += h + 26; }
+    const info = (await mockups(620)).filter(m => !m.vacia && m.nombre !== 'Extendido'); y += 18; x.fillStyle = '#B30A51'; x.font = '900 28px Rubik'; x.fillText('ASÍ SE VE PUESTO', pad, y); y = await filaCuadros(x, info.map(m => ({c: m.c, nombre: m.nombre})), pad, W, y + 20, info.length > 2 ? 420 : 600) + 54;
+    const dato = (a, b) => { x.fillStyle = '#B30A51'; x.font = '900 22px Rubik'; x.fillText(a.toUpperCase(), pad, y); y += 34; x.fillStyle = T; x.font = '600 26px Rubik'; let l = ''; for (const p of b.split(' ')) { const pr = l ? l + ' ' + p : p; if (x.measureText(pr).width > W - pad * 2) { x.fillText(l, pad, y); y += 36; l = p; } else l = pr; } x.fillText(l, pad, y); y += 48; };
+    dato('Producto', `${f.producto} · color ${f.color}`); dato(f.modoNombres ? 'Nombres y tallas' : 'Cantidad', f.cantidades);
+    if (f.porTalla.length) dato('Tamaño del diseño', f.porTalla.map(p => `${p.talla}: ` + p.vistas.map(v => `${v.nombre} ${v.diseno}`).join(', ')).join(' · '));
+    dato('Antes de aprobar, revisa', 'letras y nombres, colores, tamaño, ubicación, tallas y cantidades. Los colores en pantalla pueden verse un poco distintos.');
+    x.fillStyle = '#053468'; x.fillRect(0, y, W, 80); x.fillStyle = '#fff'; x.font = '700 24px Rubik'; x.fillText('Apruébalo en el enlace que te enviamos o responde este chat.', pad, y + 50); y += 80;
+    const out = document.createElement('canvas'); out.width = W; out.height = y; out.getContext('2d').drawImage(c, 0, 0); return out;
+  }
+  const b64u = s => s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  // El enlace lleva los datos y una vista pequeña. En la tienda real el diseño queda guardado y se ve en alta calidad.
+  async function enlaceAprob(f, cliente) {
+    const k = vistasConDiseno()[0], solo = (await disenoSolo(k, 500, 500)).c, info = (await mockups(400)).filter(m => !m.vacia && m.nombre !== 'Extendido'), puesto = (info.find(m => m.nombre === 'De frente') || info[0]).c;
+    let foto = '';
+    for (const [w, q] of [[300, .6], [300, .4], [240, .4], [200, .35], [160, .3], [130, .25]]) {
+      const c = document.createElement('canvas'); c.width = w * 2; c.height = w; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w * 2, w);
+      [solo, puesto].forEach((im, i) => { const s = Math.min(w * .94 / im.width, w * .94 / im.height); x.drawImage(im, i * w + (w - im.width * s) / 2, (w - im.height * s) / 2, im.width * s, im.height * s); });
+      foto = c.toDataURL('image/webp', q); if (!foto.startsWith('data:image/webp')) foto = c.toDataURL('image/jpeg', q);
+      if (foto.length < 2700) break;
+    }
+    const d = {c: f.codigo, n: cliente.split(' ')[0], p: f.producto, k: f.color, q: f.cantidades, m: f.porTalla.map(p => `${p.talla}: ` + p.vistas.map(v => `${v.nombre} ${v.diseno}`).join(', ')).join(' · '), f: Date.now()};
+    return new URL('aprobar.html', location.href).href.split(/[?#]/)[0] + '#d=' + b64u(btoa(unescape(encodeURIComponent(JSON.stringify(d))))) + (foto.length < 3400 ? '&i=' + (foto.startsWith('data:image/webp') ? 'w' : 'j') + b64u(foto.split(',')[1]) : '');
   }
   const blobDe = c => new Promise(ok => c.toBlob(ok, 'image/png'));
   function descargar(blob, nombre) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nombre; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
@@ -533,11 +620,13 @@
     $('#mocks-r').innerHTML = '<p class="cargando-r">Preparando la vista previa…</p>';
     const mocks = await mockups(420);
     $('#mocks-r').innerHTML = mocks.map(m => `<figure><img src="${m.c.toDataURL('image/png')}" alt="Vista ${m.nombre}"><figcaption>${m.nombre}</figcaption></figure>`).join('');
-    const vacio = !f.vistas.length;
+    const vacio = !f.vistas.length, muestra = Object.entries(S.capas).filter(([k]) => vistasConDiseno().includes(k)).flatMap(([, l]) => l).find(e => e.tipo === 'texto' && !e.variable && /^(TU NOMBRE|TU TEXTO|TU LOGO|TU FRASE\nAQUÍ)$/.test(e.texto));
     $('#spec-r').innerHTML = `<li><b>Producto</b>${f.producto} · ${esc(f.color)} · ${f.tecnica}</li><li><b>${f.modoNombres ? 'Nombres' : 'Cantidad'}</b>${esc(f.cantidades)} <em>(${f.total} en total)</em></li><li><b>Precio</b>${pesos(f.unidad)} por unidad${tipo().dos ? (f.dos ? ', por los dos lados' : ', por un lado') : ''} · <em>${pesos(f.valor)} sin envío</em></li>` +
+      (f.porTalla.length ? `<li><b>Medidas por talla</b><ol class="sin-n">${f.porTalla.map(p => `<li><em>${p.talla}${p.n ? ' × ' + p.n : ''}</em> · prenda ${p.prenda.join(' × ')} cm${p.vistas.map(v => ` · ${v.nombre} ${v.diseno}`).join('')}</li>`).join('')}</ol></li>` : '') +
       f.vistas.map(v => `<li><b>${v.vista}</b><ol>${v.items.map(i => `<li>${esc(i)}</li>`).join('')}</ol></li>`).join('') +
-      (vacio ? '<li class="alerta">Todavía no hay diseño. Vuelve al paso 2.</li>' : '') + (!f.total ? '<li class="alerta">Falta la cantidad o la lista de nombres (paso 3).</li>' : '');
+      (muestra ? `<li class="alerta">El diseño todavía dice «${muestra.texto.replace('\n', ' ')}». Cámbialo o bórralo en el paso 2.</li>` : '') + (vacio ? '<li class="alerta">Todavía no hay diseño. Vuelve al paso 2.</li>' : '') + (!f.total ? '<li class="alerta">Falta la cantidad o la lista de nombres (paso 3).</li>' : '');
     $('#enviar-p').disabled = $('#agregar-p').disabled = vacio || !f.total;
+    $('#aprob-p').disabled = $('#hoja-p').disabled = vacio || !f.total || !!muestra; listaAprob();
   }
   $('#notas-p').addEventListener('input', e => { S.notas = e.target.value; guardarBorrador(); });
   $('#cliente-p').addEventListener('input', e => { S.cliente = e.target.value; });
@@ -560,6 +649,34 @@
     guardarFicha(f);
     window.TRANSFER.agregar({id: tipo().id, dos: f.dos, perso: true, nombre: f.producto, img: m.toDataURL('image/webp', .8), tono: 't-crema', detalle: `${f.codigo} · ${f.color}${f.modoNombres ? ' · ' + f.total + ' nombres' : ''}`, talla: '—', cant: f.total || 1});
   });
+  /* ═════════ Modo taller: enviar el diseño al cliente para que lo apruebe ═════════ */
+  let taller = leerLS('transfer-taller', false);
+  function pintarTaller() { document.body.classList.toggle('modo-taller', taller); $('#taller-r').hidden = !taller; $('#modo-taller').textContent = taller ? 'Salir del modo taller' : '¿Eres del taller? Activa el modo taller'; $('#pasos-p [data-paso="4"]').lastChild.textContent = taller ? 'Aprobar' : 'Enviar'; }
+  const cambiarTaller = v => { taller = v; guardarLS('transfer-taller', v); pintarTaller(); };
+  $('#modo-taller').addEventListener('click', () => cambiarTaller(!taller));
+  if (new URLSearchParams(location.search).has('taller')) cambiarTaller(true); else pintarTaller();
+  const telCliente = () => { const n = $('#tel-cli').value.replace(/\D/g, '').replace(/^57(?=3\d{9}$)/, ''); return /^3\d{9}$/.test(n) ? n : ''; };
+  $('#nom-cli').addEventListener('input', e => { S.cliente = e.target.value; $('#cliente-p').value = e.target.value; });
+  $('#hoja-p').addEventListener('click', async () => { aviso('Preparando la hoja…'); const c = await canvasHoja($('#nom-cli').value.trim()); descargar(await blobDe(c), `Diseno-${codigo}.png`); aviso('Hoja del cliente descargada.'); });
+  $('#aprob-p').addEventListener('click', async () => {
+    const nombre = $('#nom-cli').value.trim(), tel = telCliente();
+    if (!nombre) { aviso('Escribe el nombre del cliente.'); $('#nom-cli').focus(); return; }
+    if (!tel) { aviso('Escribe el WhatsApp del cliente: 10 dígitos, empieza por 3.'); $('#tel-cli').focus(); return; }
+    const f = ficha(), w = window.open('', '_blank'), hoja = await canvasHoja(nombre), enlace = await enlaceAprob(f, nombre);
+    guardarFicha(f); const im = hoja.toDataURL('image/webp', .72); const fotos = leerLS('transfer-aprob-img', {}); fotos[f.codigo] = im; const ll = Object.keys(fotos); if (ll.length > 3) delete fotos[ll[0]]; guardarLS('transfer-aprob-img', fotos);
+    const l = leerLS('transfer-aprobaciones', []).filter(a => a.codigo !== f.codigo); l.unshift({codigo: f.codigo, cliente: nombre, tel, producto: f.producto, fecha: Date.now(), estado: 'Enviado'}); guardarLS('transfer-aprobaciones', l.slice(0, 30)); listaAprob();
+    descargar(await blobDe(hoja), `Diseno-${f.codigo}.png`);
+    const txt = `Hola ${nombre.split(' ')[0]}, te escribimos de Tránsfer!. Este es tu diseño *${f.codigo}* (${f.producto}, color ${f.color}, ${f.cantidades}).\n\nRevísalo y apruébalo aquí:\n${enlace}\n\nSi quieres un cambio, nos lo pides en el mismo enlace o por este chat. Empezamos a producir cuando lo apruebes.`;
+    const url = 'https://wa.me/57' + tel + '?text=' + encodeURIComponent(txt);
+    if (w) w.location.href = url; else window.open(url, '_blank', 'noopener');
+    aviso('Se abrió el chat del cliente y se descargó la hoja: adjúntala ahí.');
+  });
+  function listaAprob() {
+    const l = leerLS('transfer-aprobaciones', []);
+    $('#lista-aprob').innerHTML = l.length ? l.map((a, i) => `<div class="ap"><div><b>${a.codigo}</b><small>${esc(a.cliente)} · ${esc(a.producto || '')} · ${new Date(a.cuando || a.fecha).toLocaleString('es-CO', {dateStyle: 'short', timeStyle: 'short'})}</small></div><select data-ap="${i}" aria-label="Estado de ${a.codigo}">${['Enviado', 'Aprobado', 'Pidió cambio'].map(e => `<option ${e === a.estado ? 'selected' : ''}>${e}</option>`).join('')}</select><button type="button" data-ap-x="${i}" aria-label="Quitar ${a.codigo}">×</button></div>`).join('') : '<p class="vacio-el">Todavía no has enviado diseños para aprobación.</p>';
+  }
+  $('#lista-aprob').addEventListener('change', e => { const l = leerLS('transfer-aprobaciones', []), a = l[+e.target.dataset.ap]; if (!a) return; a.estado = e.target.value; a.cuando = Date.now(); guardarLS('transfer-aprobaciones', l); listaAprob(); });
+  $('#lista-aprob').addEventListener('click', e => { const b = e.target.closest('[data-ap-x]'); if (!b) return; const l = leerLS('transfer-aprobaciones', []); l.splice(+b.dataset.apX, 1); guardarLS('transfer-aprobaciones', l); listaAprob(); });
   function guardarFicha(f) { const todas = leerLS('transfer-fichas', {}); todas[f.codigo] = textoWA(f); const llaves = Object.keys(todas); if (llaves.length > 20) delete todas[llaves[0]]; guardarLS('transfer-fichas', todas); }
 
   /* Mis diseños y enlace para compartir */
@@ -616,14 +733,14 @@
   const q = new URLSearchParams(location.search), hash = location.hash.match(/#d=([\w-]+)/);
   const borrador = leerLS('transfer-editor', null);
   if (hash) { try { const o = JSON.parse(decodeURIComponent(escape(atob(hash[1].replace(/-/g, '+').replace(/_/g, '/'))))); Object.assign(S, {prod: o.prod, tipo: o.tipo, color: o.color, otro: o.otro ?? null, capas: o.capas}); } catch (e) {} }
-  else if (q.get('producto') && PRENDAS[q.get('producto')]) { S.prod = q.get('producto'); S.tipo = q.get('tipo'); S.tipo = tipo().id; S.color = colores()[0][1]; if (S.prod === 'buzo') S.color = '#1D3C78'; const cq = (q.get('color') || '').toUpperCase(); if (colores().some(c => c[1].toUpperCase() === cq)) S.color = colores().find(c => c[1].toUpperCase() === cq)[1]; S.capas = {frente: [nuevoTexto({texto: q.get('texto') || 'TU NOMBRE', color: claro(fondoDe(S.prod, S.color, S.tipo)) ? '#053468' : '#FECF03', y: .35})]}; }
+  else if (q.get('producto') && PRENDAS[q.get('producto')]) { S.prod = q.get('producto'); S.tipo = q.get('tipo'); S.tipo = tipo().id; S.color = colores()[0][1]; if (S.prod === 'buzo') S.color = '#1D3C78'; const cq = (q.get('color') || '').toUpperCase(); if (colores().some(c => c[1].toUpperCase() === cq)) S.color = colores().find(c => c[1].toUpperCase() === cq)[1]; S.capas = {frente: [nuevoTexto({defecto: !q.get('texto'), texto: q.get('texto') || 'TU NOMBRE', color: claro(fondoDe(S.prod, S.color, S.tipo)) ? '#053468' : '#FECF03', y: .35})]}; }
   else if (q.get('texto')) { S.capas = {frente: [nuevoTexto({texto: q.get('texto').slice(0, 30), y: .35})]}; }
   else if (borrador && Object.values(borrador.capas || {}).flat().length) { Object.entries(borrador.imgs || {}).forEach(([id, i]) => { IMGS[id] = i; }); Object.assign(S, borrador); Object.values(S.capas).flat().forEach(e => { if (e.img && !IMGS[e.img]) e.img = 'st:estrella'; }); S.sel = null; }
-  else S.capas = {frente: [nuevoTexto({y: .35})]};
+  else S.capas = {frente: [nuevoTexto({y: .35, defecto: true})]};
   if (!PRENDAS[S.prod]) S.prod = 'buzo';
   if (S.otro === null && S.tallas) Object.keys(S.tallas).forEach(k => { if (PRENDAS[S.prod].tallas && !PRENDAS[S.prod].tallas.includes(k)) delete S.tallas[k]; });   // borradores viejos con tallas que no se manejan
   tipoBueno(); prepararCapas(); todo(); guardarHist();
   // repinta los textos cuando terminen de cargar las letras
   Promise.all(['900 40px Rubik', '500 40px Rubik', '300 40px Rubik', '400 40px Anton'].map(f => document.fonts.load(f))).catch(() => {}).finally(() => { renderCapas(); });
-  window.PERSONALIZADOR = {S, ficha, textoWA, canvasFicha, renderMockup, arteExtendido};
+  window.PERSONALIZADOR = {S, ficha, textoWA, canvasFicha, canvasHoja, enlaceAprob, disenoSolo, renderMockup, arteExtendido, medidaDiseno, enTalla};
 })();

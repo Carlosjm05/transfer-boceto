@@ -41,5 +41,21 @@
     mapa: 'https://www.google.com/maps/search/?api=1&query=Calle%204%20%2313a-25%2C%20Puerto%20Madero%2C%20Piedecuesta%2C%20Santander',
     whatsapp: '321 280 8077', correo: 'transferbga@gmail.com', horario: 'Lunes a viernes 8 a. m. a 12 m. y 2 a 5:30 p. m. · Sábados 8 a. m. a 12 m.',
   };
-  window.TR_DATOS = {PRODUCTOS, producto, pesos, unidad, textoBaja, NEGOCIO, ROPA, GORRA, BLANCO, TALLAS};
+  // Medidas por talla, en cm, de referencia (se cambian aquí cuando se midan las prendas reales).
+  // prenda: [ancho de axila a axila, largo]. frente y espalda: guía de impresión [ancho, alto, distancia bajo el cuello].
+  const REGULAR = {
+    S: {prenda: [46, 71], frente: [26, 32, 6], espalda: [28, 36, 8]}, M: {prenda: [51, 74], frente: [28, 35, 6.5], espalda: [30, 38, 9]}, L: {prenda: [56, 76], frente: [30, 37, 7], espalda: [32, 40, 9.5]},
+    XL: {prenda: [61, 79], frente: [32, 40, 7.5], espalda: [34, 42, 10]}, XXL: {prenda: [66, 81], frente: [34, 42, 8], espalda: [36, 44, 10.5]}, 'Niño': {prenda: [41, 56], frente: [20, 24, 5], espalda: [22, 27, 6]}};
+  const OVERSIZE = {
+    S: {prenda: [54, 73], frente: [28, 34, 6], espalda: [31, 38, 9]}, M: {prenda: [59, 76], frente: [30, 37, 6.5], espalda: [33, 40, 9.5]}, L: {prenda: [64, 78], frente: [32, 39, 7], espalda: [35, 42, 10]},
+    XL: {prenda: [69, 81], frente: [34, 42, 7.5], espalda: [37, 44, 10.5]}, XXL: {prenda: [74, 83], frente: [36, 44, 8], espalda: [39, 46, 11]}, 'Niño': {prenda: [47, 58], frente: [22, 26, 5], espalda: [24, 29, 6]}};
+  const POLO = {
+    S: {prenda: [46, 71], frente: [26, 28, 15], espalda: [28, 36, 8]}, M: {prenda: [51, 74], frente: [28, 30, 15], espalda: [30, 38, 9]}, L: {prenda: [56, 76], frente: [30, 32, 15], espalda: [32, 40, 9.5]},
+    XL: {prenda: [61, 79], frente: [32, 34, 16], espalda: [34, 42, 10]}, XXL: {prenda: [66, 81], frente: [34, 36, 16], espalda: [36, 44, 10.5]}, 'Niño': {prenda: [41, 56], frente: [20, 20, 12], espalda: [22, 27, 6]}};
+  const BUZO = {
+    S: {prenda: [51, 69], frente: [26, 25, 7], espalda: [30, 34, 2]}, M: {prenda: [56, 71], frente: [28, 26, 7], espalda: [32, 36, 2]}, L: {prenda: [61, 74], frente: [29, 27, 7], espalda: [33, 37, 2]},
+    XL: {prenda: [66, 76], frente: [30, 28, 7], espalda: [34, 38, 2]}, XXL: {prenda: [71, 79], frente: [32, 29, 7], espalda: [36, 40, 2]}, 'Niño': {prenda: [45, 54], frente: [20, 19, 5], espalda: [24, 26, 2]}};
+  const MEDIDAS = {'camiseta-durazno': REGULAR, 'camiseta-algodon': REGULAR, 'camiseta-oversize': OVERSIZE, polo: POLO, buzo: BUZO};
+
+  window.TR_DATOS = {MEDIDAS, PRODUCTOS, producto, pesos, unidad, textoBaja, NEGOCIO, ROPA, GORRA, BLANCO, TALLAS};
 })();

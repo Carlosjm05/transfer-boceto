@@ -344,7 +344,7 @@
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]'); if (!a || reducido) return;
     const url = a.getAttribute('href');
-    if (!url || url.startsWith('#') || url.startsWith('http') || a.target || e.ctrlKey || e.metaKey) return;
+    if (!url || a.hasAttribute('download') || /^(#|https?:|blob:|data:|mailto:|tel:)/.test(url) || a.target || e.ctrlKey || e.metaKey) return;   // las descargas y los enlaces externos no llevan transicion
     e.preventDefault(); document.body.classList.add('saliendo'); setTimeout(() => location.href = url, 380);
   });
   addEventListener('pageshow', () => document.body.classList.remove('saliendo'));

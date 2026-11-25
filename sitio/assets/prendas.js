@@ -30,7 +30,7 @@
   const PLIEG_BUZO = '<path d="M200 300 C236 380 226 470 208 570" stroke-width="16"/><path d="M402 300 C370 380 384 470 400 570" stroke-width="16"/><path d="M80 300 C92 380 86 460 74 540" stroke-width="12"/><path d="M520 300 C508 380 514 460 526 540" stroke-width="12"/><path d="M150 260 C176 290 200 300 232 300" stroke-width="10"/><path d="M450 260 C424 290 400 300 368 300" stroke-width="10"/>';
 
   // Colores, tallas y tipos (con su precio) salen de datos.js
-  const {ROPA: COL_ROPA, GORRA: COL_GORRA, BLANCO: COL_BLANCO, TALLAS, PRODUCTOS} = window.TR_DATOS;
+  const {ROPA: COL_ROPA, GORRA: COL_GORRA, BLANCO: COL_BLANCO, TALLAS, PRODUCTOS, MEDIDAS} = window.TR_DATOS;
   const tiposDe = p => PRODUCTOS.filter(x => x.perso === p);
 
   // Superficie extendida de un cilindro: hoja blanca y, debajo, qué parte es cada tramo
@@ -100,10 +100,22 @@
   const vistaDe = (p, v) => PRENDAS[p].vistas[v];
   const areaDe = v => { const [x, y, w, h] = v.area; return v.espejo ? [v.vb[0] - x - w, y, w, h] : [x, y, w, h]; };
   const vistasDe = P => Object.entries(P.vistas).filter(([, v]) => !v.soloDibujo);   // las que el cliente diseña
+  /* ═════════ Tallas: todo a la misma escala (K px por cm), así una XL se ve más grande que una M y la guía cambia con ella ═════════ */
+  // w: ancho del cuerpo en el dibujo · y0, y1: hombro y ruedo · desde: dónde empieza la guía si no es el cuello (bajo la botonadura o la capota)
+  const GEO = {camiseta: {w: 344, y0: 52, y1: 612}, 'camiseta-oversize': {w: 368, y0: 52, y1: 606}, polo: {w: 344, y0: 60, y1: 612, desde: {frente: 190}}, buzo: {w: 312, y0: 80, y1: 634, desde: {espalda: 246}}};
+  const K = 5, TOPE = 48, LIENZO = [600, 490];
+  const medidaDe = (tipo, talla) => (MEDIDAS[tipo] || {})[talla];
+  function vistaTalla(p, vista, tipo, talla) {
+    const v = PRENDAS[p].vistas[vista], k = tipo || tiposDe(p)[0]?.id, m = v && medidaDe(k, talla); if (!m) return v;
+    const g = GEO[k] || GEO[p], [pa, pl] = m.prenda, [w, h, bajo] = m[vista], sx = pa * K / g.w, sy = pl * K / (g.y1 - g.y0), ty = TOPE - g.y0 * sy, cuello = ty + v.cuello * sy;
+    const y = g.desde?.[vista] ? ty + g.desde[vista] * sy + 1.5 * K : cuello + bajo * K;
+    return {...v, vb: LIENZO, area: [300 - w * K / 2, y, w * K, h * K], cm: w, cuello, prenda: m.prenda, talla, tf: `translate(${(300 - 300 * sx).toFixed(2)} ${ty.toFixed(2)}) scale(${sx.toFixed(4)} ${sy.toFixed(4)})`};
+  }
   let uid = 0;
-  function svgDe(p, vista, capa, color, tipo) {
-    const v = vistaDe(p, vista), [w, h] = v.vb, u = 'p' + (++uid), k = tipo || tiposDe(p)[0]?.id;
+  function svgDe(p, vista, capa, color, tipo, talla) {
+    const v = vistaTalla(p, vista, tipo, talla), [w, h] = v.vb, u = 'p' + (++uid), k = tipo || tiposDe(p)[0]?.id;
     let dentro = capa === 'base' ? v.base(color, oscuro(color, color.toUpperCase() === '#FFFFFF' ? .9 : .78), k) : capa === 'sombra' ? v.sombra(u, k) : (v.brillo ? (capa === 'brillo' ? (v.sombra(u).match(/<defs>[\s\S]*?<\/defs>/) || [''])[0] + v.brillo(u) : '') : '');
+    if (v.tf) dentro = `<g transform="${v.tf}">${dentro}</g>`;
     if (v.espejo) dentro = `<g transform="translate(${w} 0) scale(-1 1)">${dentro}</g>`;
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">${dentro}</svg>`;
   }
@@ -111,5 +123,5 @@
 
   const fondoDe = (p, color, tipo) => PRENDAS[p].vistas.vuelta || (p === 'gorra' && (tipo || tiposDe(p)[0].id) === 'gorra-trucker') ? '#FFFFFF' : color;
 
-  window.TR_PRENDAS = {PRENDAS, tiposDe, fondoDe, vistaDe, vistasDe, areaDe, svgDe, imgDeSvg, oscuro};
+  window.TR_PRENDAS = {PRENDAS, tiposDe, fondoDe, vistaTalla, medidaDe, vistaDe, vistasDe, areaDe, svgDe, imgDeSvg, oscuro};
 })();
