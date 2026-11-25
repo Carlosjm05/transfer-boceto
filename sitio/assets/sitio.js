@@ -6,21 +6,7 @@
   const fino = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   /* ───── Catálogo (lo usan tienda, menú, carrito y producto) ───── */
-  const CATALOGO = [
-    {id:'buzo-estrella', nombre:'Buzo estrella', cat:'Buzos', img:REC+'prod-buzo-azul.webp', tono:'t-amarillo', sub:'Estampado al frente', color:'Azul', nuevo:true},
-    {id:'buzo-espalda', nombre:'Espalda total', cat:'Buzos', img:REC+'prod-buzo-cian-espalda.webp', tono:'t-azul', sub:'Diseño grande atrás', color:'Cian'},
-    {id:'buzo-amarillo', nombre:'Buzo sol', cat:'Buzos', img:REC+'prod-buzo-amarillo.webp', tono:'t-azul', sub:'Estrella al pecho', color:'Amarillo', nuevo:true},
-    {id:'buzo-vino', nombre:'Buzo constelación', cat:'Buzos', img:REC+'prod-buzo-vino.webp', tono:'t-vino', sub:'Estrellas en la espalda', color:'Vino'},
-    {id:'buzo-negro', nombre:'Buzo noche', cat:'Buzos', img:REC+'prod-buzo-negro.webp', tono:'t-amarillo', sub:'DTF en tela oscura', color:'Negro'},
-    {id:'camiseta-negra', nombre:'Camiseta negra', cat:'Camisetas', img:REC+'prod-camiseta-negra.webp', tono:'t-vino', sub:'DTF a todo color', color:'Negro'},
-    {id:'camiseta-blanca', nombre:'Camiseta clásica', cat:'Camisetas', img:REC+'prod-camiseta-blanca.webp', tono:'t-amarillo', sub:'Tu diseño al pecho', color:'Blanco'},
-    {id:'camiseta-cian', nombre:'Camiseta cielo', cat:'Camisetas', img:REC+'prod-camiseta-cian.webp', tono:'t-azul', sub:'Rompecabezas y estrella', color:'Cian', nuevo:true},
-    {id:'polo-dotacion', nombre:'Polo de dotación', cat:'Dotación', img:REC+'prod-polo-azul.webp', tono:'t-amarillo', sub:'Logo pequeño al pecho', color:'Azul'},
-    {id:'gorra', nombre:'Gorra con parche', cat:'Gorras', img:REC+'prod-gorra.webp', tono:'t-cian', sub:'Tu logo al frente', color:'Azul'},
-    {id:'mug', nombre:'Mug sublimado', cat:'Mugs', img:REC+'prod-mug.webp', tono:'t-vino', sub:'Diseño alrededor', color:'Blanco'},
-    {id:'termo', nombre:'Termo', cat:'Termos', img:REC+'prod-termo.webp', tono:'t-azul', sub:'Frío o caliente', color:'Cian'},
-    {id:'llavero', nombre:'Llavero acrílico', cat:'Llaveros', img:REC+'prod-llavero.webp', tono:'t-amarillo', sub:'Sublimado por ambas caras', color:'Azul'}
-  ];
+  const {PRODUCTOS: CATALOGO, producto: mini, pesos, unidad, textoBaja, NEGOCIO} = window.TR_DATOS;   // datos reales: assets/datos.js
   window.TRANSFER = {CATALOGO, tarjeta, WA};
 
   const GARABATOS = [
@@ -29,9 +15,8 @@
     '<path d="M12 60q15-30 30 0t30 0 30 0"/><path d="M70 15l6 12 12 2-9 8 2 12-11-6-11 6 2-12-9-8 12-2z"/>'
   ];
   function tarjeta(p, i = 0) {
-    return `<a class="tarjeta ${p.tono}" href="producto.html?p=${p.id}" data-cat="${p.cat}" data-color="${p.color}">
-      ${p.nuevo ? '<span class="sello-t">Nuevo</span>' : ''}
-      <span class="etq">${p.cat}</span><span class="h3">${p.nombre}</span><span class="sub">${p.sub}</span>
+    return `<a class="tarjeta ${p.tono}" href="producto.html?p=${p.id}" data-cat="${p.cat}">
+      <span class="etq">${p.cat}</span><span class="h3">${p.nombre}</span><span class="sub">${p.sub} · <b>${pesos(p.precio)}</b></span>
       <div class="img"><span class="garabato"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">${GARABATOS[i % 3]}</svg></span><img src="${p.img}" alt="${p.nombre} personalizado con estampado" loading="lazy"></div>
       <span class="ir">↗</span></a>`;
   }
@@ -55,19 +40,19 @@
     <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v2H7v4h2v7h4v-7h3l1-4h-4V9c0-.6.4-1 1-1z"/></symbol>
     <symbol id="i-mail" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" d="M3 6h18v12H3zM3 7l9 6 9-6"/></symbol>
     <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5" fill="currentColor"/></symbol>
+    <symbol id="i-reloj" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></g></symbol>
     <symbol id="i-wa" viewBox="0 0 32 32"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.6-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7 6.3 6.3 0 0 0 1.3 3.3c.2.2 2.3 3.5 5.5 4.9 2 .9 2.8.9 3.8.8.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.7-.4z"/></symbol>
   </defs></svg>`;
 
   const pagina = document.body.dataset.pagina || '';
   const enlaces = [['inicio','index.html','Inicio'],['tienda','tienda.html','Tienda'],['personaliza','personaliza.html','Personaliza'],['navidad','navidad.html','Navidad'],['empresas','empresas.html','Empresas'],['nosotros','nosotros.html','Nosotros'],['contacto','contacto.html','Contacto']];
-  const mini = id => CATALOGO.find(p => p.id === id);
 
-  const AVISO = `<div class="aviso cinta"><div class="pista">${[0,1].map(() => '<span>Desde <b>una sola pieza</b></span><span>Envíos a toda <b>Colombia</b></span><span>Estampamos en <b>DTF y sublimación</b></span><span>Pedidos para <b>empresas y colegios</b></span><span>Separa tus camisetas de <b>Navidad</b></span><span>Míralo puesto <b>antes de pedir</b></span><span>Hecho en <b>Piedecuesta, Santander</b></span>').join('')}</div></div>`;
+  const AVISO = `<div class="aviso cinta"><div class="pista">${[0,1].map(() => '<span>Desde <b>una sola pieza</b></span><span>Envíos a toda <b>Colombia</b></span><span>Estampamos en <b>DTF y sublimación</b></span><span>Pedidos para <b>empresas y colegios</b></span><span>Separa tus camisetas de <b>Navidad</b></span><span>Míralo puesto <b>antes de pedir</b></span><span>Te lo diseñamos <b>sin costo</b></span><span>Hecho en <b>Piedecuesta, Santander</b></span>').join('')}</div></div>`;
 
   const MEGA = `<div class="mega">
-      <div><h5>Prendas</h5><a href="tienda.html#Buzos"><img src="${mini('buzo-estrella').img}" alt="">Buzos</a><a href="tienda.html#Camisetas"><img src="${mini('camiseta-blanca').img}" alt="">Camisetas</a><a href="tienda.html#Dotación"><img src="${mini('polo-dotacion').img}" alt="">Dotación</a></div>
-      <div><h5>Accesorios</h5><a href="tienda.html#Gorras"><img src="${mini('gorra').img}" alt="">Gorras</a><a href="tienda.html#Llaveros"><img src="${mini('llavero').img}" alt="">Llaveros</a></div>
-      <div><h5>Hogar y oficina</h5><a href="tienda.html#Mugs"><img src="${mini('mug').img}" alt="">Mugs</a><a href="tienda.html#Termos"><img src="${mini('termo').img}" alt="">Termos</a></div>
+      <div><h5>Prendas</h5><a href="tienda.html#Camisetas"><img src="${mini('camiseta-algodon').img}" alt="">Camisetas</a><a href="tienda.html#Buzos"><img src="${mini('buzo').img}" alt="">Buzos</a><a href="tienda.html#Polos"><img src="${mini('polo').img}" alt="">Polos</a></div>
+      <div><h5>Accesorios</h5><a href="tienda.html#Gorras"><img src="${mini('gorra-trucker').img}" alt="">Gorras</a><a href="producto.html?p=llavero"><img src="${mini('llavero').img}" alt="">Llaveros</a><a href="tienda.html#Accesorios"><img src="${mini('portavasos').img}" alt="">Ver todos</a></div>
+      <div><h5>Hogar y oficina</h5><a href="tienda.html#Mugs"><img src="${mini('mug').img}" alt="">Mugs</a><a href="tienda.html#Termos"><img src="${mini('tomatodo').img}" alt="">Termos</a></div>
       <a class="destacado" href="personaliza.html"><img src="${IMG}c-buzos.webp" alt=""><span><b style="color:var(--azul)">Hazlo tuyo ✦</b><br>Sube tu logo y míralo puesto</span></a>
     </div>`;
 
@@ -83,12 +68,12 @@
     <div class="menu-movil" aria-hidden="true"><button class="cerrar" data-cerrar-menu aria-label="Cerrar">×</button>
       <nav>${enlaces.map(([id, url, txt], i) => `<a href="${url}" class="${id === pagina ? 'on' : ''}" style="--i:${i}">${txt}</a>`).join('')}</nav>
       <img class="ilus-m mece" src="${ILUS}mascota.webp" alt="">
-      <div class="pie-m">321 280 8077 · transferbga@gmail.com<br>Piedecuesta, Santander</div></div>`;
+      <div class="pie-m">321 280 8077 · transferbga@gmail.com<br>Calle 4 #13a-25, Puerto Madero · Piedecuesta</div></div>`;
 
   const CARRITO = `<div class="velo" data-cerrar-carrito></div>
     <aside class="carrito" aria-label="Tu pedido"><div class="cab"><span class="h3">Tu pedido</span><button class="redondo" data-cerrar-carrito aria-label="Cerrar">×</button></div>
       <div data-items></div>
-      <div class="nota"><img class="mece" src="${ILUS}taza.webp" alt="">El precio depende de la cantidad y del diseño. Te enviamos la cotización por WhatsApp.</div>
+      <div class="nota"><img class="mece" src="${ILUS}taza.webp" alt=""><div class="totales" data-totales></div><small>El envío lo pagas tú según la ciudad, o recoges gratis en el taller. Pagas con Mercado Pago, Nequi, Daviplata o en efectivo en el taller.</small></div>
       <a class="btn ancho" data-enviar-pedido href="#">Enviar pedido por WhatsApp <i>→</i></a></aside>`;
 
   const PIE = `<footer class="pie">
@@ -99,9 +84,9 @@
     </div></div>
     <div class="pie-cuerpo"><div class="env">
       <div class="cols">
-        <div class="marca"><img src="${RECURSOS}logo-blanco.svg" alt="Tránsfer!"><p>Taller de estampados en Piedecuesta, Santander. Camisetas, buzos, gorras, mugs y termos personalizados para Bucaramanga, Floridablanca, Girón y toda Colombia.</p>
-          <ul class="contacto-p"><li><a href="${WA}Hola%20Tr%C3%A1nsfer!"><svg><use href="#i-wa"/></svg>321 280 8077</a></li><li><a href="mailto:transferbga@gmail.com"><svg><use href="#i-mail"/></svg>transferbga@gmail.com</a></li><li><a href="https://www.google.com/maps/search/?api=1&query=Piedecuesta%2C%20Santander" target="_blank" rel="noopener"><svg><use href="#i-pin"/></svg>Calle 4 #13a-25, Puerto Madero · Piedecuesta</a></li></ul></div>
-        <div><h5>Tienda</h5><ul><li><a href="tienda.html#Buzos">Buzos personalizados</a></li><li><a href="tienda.html#Camisetas">Camisetas personalizadas</a></li><li><a href="tienda.html#Gorras">Gorras</a></li><li><a href="tienda.html#Mugs">Mugs y termos</a></li><li><a href="tienda.html#Llaveros">Llaveros</a></li><li><a href="navidad.html">Camisetas navideñas</a></li></ul></div>
+        <div class="marca"><img src="${RECURSOS}logo-blanco.svg" alt="Tránsfer!"><p>Taller de estampados en Piedecuesta, Santander. Camisetas, buzos, polos, gorras, mugs y termos personalizados para Bucaramanga, Floridablanca, Girón y toda Colombia.</p>
+          <ul class="contacto-p"><li><a href="${WA}Hola%20Tr%C3%A1nsfer!"><svg><use href="#i-wa"/></svg>321 280 8077</a></li><li><a href="mailto:transferbga@gmail.com"><svg><use href="#i-mail"/></svg>transferbga@gmail.com</a></li><li><a href="${NEGOCIO.mapa}" target="_blank" rel="noopener"><svg><use href="#i-pin"/></svg><span>Calle 4 #13a-25, Puerto Madero · Piedecuesta<br><small>Frente a Copetran, papelería Nubeluz</small></span></a></li><li class="hora-p"><svg><use href="#i-reloj"/></svg><span>Lunes a viernes 8 a 12 y 2 a 5:30<br>Sábados 8 a 12</span></li></ul></div>
+        <div><h5>Tienda</h5><ul><li><a href="tienda.html#Buzos">Buzos personalizados</a></li><li><a href="tienda.html#Camisetas">Camisetas personalizadas</a></li><li><a href="tienda.html#Polos">Polos</a></li><li><a href="tienda.html#Gorras">Gorras</a></li><li><a href="tienda.html#Mugs">Mugs y termos</a></li><li><a href="tienda.html#Accesorios">Accesorios</a></li><li><a href="navidad.html">Camisetas navideñas</a></li></ul></div>
         <div><h5>Para empresas</h5><ul><li><a href="empresas.html">Dotación con tu logo</a></li><li><a href="empresas.html">Buzos de prom</a></li><li><a href="empresas.html">Regalos de fin de año</a></li><li><a href="empresas.html#cotizar">Cotizar un pedido</a></li></ul></div>
         <div><h5>Ayuda</h5><ul><li><a href="faq.html#pedidos">Cómo comprar</a></li><li><a href="faq.html">Preguntas frecuentes</a></li><li><a href="contacto.html">Contacto</a></li><li><a href="nosotros.html">Nosotros</a></li><li><a href="legal.html">Términos y datos personales</a></li></ul></div>
       </div>
@@ -207,17 +192,17 @@
   document.querySelector('[data-cerrar-menu]').addEventListener('click', () => { mm.classList.remove('abierto'); mm.setAttribute('aria-hidden', 'true'); });
 
   /* ───── «Nosotros lo diseñamos por ti»: cualquier elemento con data-disenamelo abre este formulario ───── */
-  if (document.querySelector('[data-disenamelo]')) {
+  if (document.querySelector('[data-disenamelo]') || pagina === 'tienda') {
     document.body.insertAdjacentHTML('beforeend', `<dialog class="dlg-dj" aria-labelledby="dj-t"><form method="dialog"><button type="button" class="redondo cerrar-dj" aria-label="Cerrar">×</button>
-      <h2 class="h3" id="dj-t">Nosotros lo diseñamos por ti</h2><p>Cuéntanos qué te imaginas, así sea solo la idea. Te escribimos por WhatsApp con la propuesta antes de estampar.</p>
-      <label>¿En qué lo quieres?<select name="prod">${['Camiseta', 'Buzo', 'Gorra', 'Mug', 'Termo', 'Llavero', 'Varios productos', 'Todavía no sé'].map(p => `<option>${p}</option>`).join('')}</select></label>
+      <h2 class="h3" id="dj-t">Nosotros lo diseñamos por ti</h2><p>Cuéntanos qué te imaginas, así sea solo la idea. El diseño no tiene costo: te escribimos por WhatsApp con la propuesta antes de estampar.</p>
+      <label>¿En qué lo quieres?<select name="prod">${['Camiseta', 'Buzo', 'Polo', 'Gorra', 'Mug', 'Termo', 'Reno de Navidad', 'Portavasos', 'Llavero', 'Lapicero', 'Lámina portarretrato', 'Rompecabezas', 'Varios productos', 'Todavía no sé'].map(p => `<option>${p}</option>`).join('')}</select></label>
       <label>¿Qué te imaginas?<textarea name="idea" rows="4" maxlength="500" required placeholder="Ej.: un mug para el cumpleaños de mi mamá, con flores, su nombre y colores pastel"></textarea></label>
       <div class="dos-dj"><label>¿Cuántas unidades?<input name="cant" type="number" min="1" inputmode="numeric" placeholder="1"></label><label>¿Para cuándo?<input name="fecha" type="text" maxlength="40" placeholder="Ej.: 15 de diciembre"></label></div>
       <label>Tu nombre<input name="nombre" type="text" maxlength="60" autocomplete="name"></label>
       <button type="submit" class="btn">Enviar mi idea por WhatsApp <i>→</i></button><small>Si tienes fotos o ejemplos que te gusten, mándalos en el mismo chat.</small></form></dialog>`);
     const dj = document.querySelector('.dlg-dj'), fj = dj.querySelector('form');
-    const NOMBRES = {camiseta: 'Camiseta', buzo: 'Buzo', gorra: 'Gorra', mug: 'Mug', termo: 'Termo'};
-    document.addEventListener('click', e => { if (!e.target.closest('[data-disenamelo]')) return; e.preventDefault(); const p = window.PERSONALIZADOR && NOMBRES[window.PERSONALIZADOR.S.prod]; if (p) fj.prod.value = p; dj.showModal(); });
+    const NOMBRES = {camiseta: 'Camiseta', buzo: 'Buzo', polo: 'Polo', gorra: 'Gorra', mug: 'Mug', termo: 'Termo'};
+    document.addEventListener('click', e => { const b = e.target.closest('[data-disenamelo]'); if (!b) return; e.preventDefault(); const p = b.dataset.disenamelo || (window.PERSONALIZADOR && NOMBRES[window.PERSONALIZADOR.S.prod]); if (p) fj.prod.value = p; dj.showModal(); });
     dj.addEventListener('click', e => { if (e.target === dj || e.target.closest('.cerrar-dj')) dj.close(); });
     fj.addEventListener('submit', e => {
       e.preventDefault(); const v = n => fj.elements[n].value.trim();
@@ -231,16 +216,21 @@
   // El pedido se guarda en este navegador (localStorage) para que no se pierda al cambiar de pagina.
   const CLAVE = 'transfer-pedido';
   let pedido = [];
-  try { pedido = (JSON.parse(localStorage.getItem(CLAVE)) || []).filter(it => it.perso || mini(it.id)); } catch (e) { pedido = []; }
+  try { pedido = (JSON.parse(localStorage.getItem(CLAVE)) || []).filter(it => mini(it.id)); } catch (e) { pedido = []; }
   const guardarPedido = () => { try { localStorage.setItem(CLAVE, JSON.stringify(pedido)); } catch (e) {} };
   const itemsEl = document.querySelector('[data-items]'), contador = document.querySelector('[data-contador]');
+  // Las tallas y los colores de un mismo producto se suman para el precio desde 6 unidades
+  const unidadesDe = id => pedido.reduce((a, it) => a + (it.id === id ? it.cant : 0), 0);
+  const precioDe = it => { const p = mini(it.id); return p ? unidad(p, {dosLados: it.dos, total: unidadesDe(it.id)}) : 0; };
+  const detalleDe = it => [it.perso ? it.detalle : null, it.color, it.opcion, it.talla && it.talla !== '—' ? 'Talla ' + it.talla : null, it.dos ? 'Dos lados' : null].filter(Boolean).join(' · ');
   function pintarCarrito() {
-    itemsEl.innerHTML = pedido.map((it, i) => { const p = it.perso ? it : mini(it.id); return `<div class="item"><img class="${p.tono || 't-amarillo'}" src="${p.img}" alt=""><div><b>${p.nombre}</b><small>${it.perso ? it.detalle : p.cat}${it.talla && it.talla !== '—' ? ' · Talla ' + it.talla : ''} · Cant. ${it.cant}</small></div><button class="quitar" data-quitar="${i}" aria-label="Quitar">×</button></div>`; }).join('') || '<p style="color:var(--suave)">Tu pedido está vacío.</p>';
-    const total = pedido.reduce((a, b) => a + b.cant, 0);
+    itemsEl.innerHTML = pedido.map((it, i) => { const p = it.perso ? it : mini(it.id), u = precioDe(it); return `<div class="item"><img class="${p.tono || 't-amarillo'}" src="${p.img}" alt=""><div><b>${p.nombre}</b><small>${detalleDe(it) || p.cat}</small><small>${it.cant} × ${pesos(u)} = <strong>${pesos(u * it.cant)}</strong></small></div><button class="quitar" data-quitar="${i}" aria-label="Quitar">×</button></div>`; }).join('') || '<p style="color:var(--suave)">Tu pedido está vacío.</p>';
+    const total = pedido.reduce((a, b) => a + b.cant, 0), valor = pedido.reduce((a, it) => a + precioDe(it) * it.cant, 0);
     contador.textContent = total; contador.hidden = !total;
     contador.classList.remove('salta'); void contador.offsetWidth; contador.classList.add('salta');
-    const txt = 'Hola Tránsfer!, quiero cotizar: ' + pedido.map(it => { const n = it.perso ? it.nombre + ' (' + it.detalle + ')' : mini(it.id).nombre; return `${n}${it.talla && it.talla !== '—' ? ' (talla ' + it.talla + ')' : ''} x${it.cant}`; }).join(', ');
-    document.querySelector('[data-enviar-pedido]').href = WA + encodeURIComponent(txt);
+    document.querySelector('[data-totales]').innerHTML = valor ? `<p><span>Total sin envío</span><b>${pesos(valor)}</b></p><p><span>Anticipo del 50 % para empezar</span><b>${pesos(valor / 2)}</b></p>` : '<p><span>Agrega productos y aquí ves el total.</span></p>';
+    const txt = 'Hola Tránsfer!, quiero hacer este pedido:\n\n' + pedido.map(it => { const p = it.perso ? it : mini(it.id), u = precioDe(it), d = detalleDe(it); return `• ${it.cant} × ${p.nombre}${d ? ' (' + d + ')' : ''}: ${pesos(u * it.cant)}`; }).join('\n') + (valor ? `\n\nTotal sin envío: ${pesos(valor)}` : '');
+    document.querySelector('[data-enviar-pedido]').href = WA + encodeURIComponent(pedido.length ? txt : 'Hola Tránsfer!, quiero hacer un pedido');
     guardarPedido();
   }
   const abrirCarrito = () => { document.querySelector('.carrito').classList.add('abierto'); document.querySelector('.velo').classList.add('abierto'); };
@@ -250,8 +240,8 @@
     if (e.target.closest('[data-cerrar-carrito]')) cerrarCarrito();
     const q = e.target.closest('[data-quitar]'); if (q) { pedido.splice(+q.dataset.quitar, 1); pintarCarrito(); }
     const a = e.target.closest('[data-agregar]');
-    if (a) { e.preventDefault(); const talla = (document.querySelector('[data-tallas] .on') || {}).textContent || '—', cant = +(document.querySelector('[data-cant]') || {value: 1}).value || 1;
-      pedido.push({id: a.dataset.agregar, talla, cant}); pintarCarrito(); conTope(volar(mini(a.dataset.agregar).img, a)).then(abrirCarrito); }
+    if (a) { e.preventDefault(); const marcado = s => (document.querySelector(s + ' .on') || {}), talla = marcado('[data-tallas]').textContent || '—', color = marcado('[data-colores]').title || '', opcion = marcado('[data-opciones]').textContent || '', dos = marcado('[data-lados]').dataset?.dos === '1', cant = Math.max(1, +(document.querySelector('[data-cant]') || {value: 1}).value || 1);
+      pedido.push({id: a.dataset.agregar, talla, color, opcion, dos, cant}); pintarCarrito(); conTope(volar(mini(a.dataset.agregar).img, a)).then(abrirCarrito); }
   });
   pintarCarrito();
   // La imagen del producto vuela hasta el carrito antes de abrirlo
@@ -272,22 +262,22 @@
     ['Camisetas navideñas', 'navidad.html', 'Navidad, novena, familia, amigo secreto'],
     ['Personalizador en línea', 'personaliza.html', 'Diseña tu prenda, sube tu logo o tu foto'],
     ['Empresas y colegios', 'empresas.html', 'Dotación, buzos de prom, regalos de fin de año'],
-    ['Preguntas frecuentes', 'faq.html', 'Pedidos, envíos, pagos, cuidados del estampado'],
-    ['Contacto', 'contacto.html', 'WhatsApp, correo y dirección en Piedecuesta'],
+    ['Preguntas frecuentes', 'faq.html', 'Precios, pagos, envíos, tiempos, garantía y cuidados'],
+    ['Contacto', 'contacto.html', 'WhatsApp, correo, horario y dirección en Piedecuesta'],
     ['Nosotros', 'nosotros.html', 'El taller, DTF y sublimación'],
   ];
   document.body.insertAdjacentHTML('beforeend', `<div class="buscador" role="dialog" aria-modal="true" aria-label="Buscar" hidden>
-    <div class="buscador-caja"><svg><use href="#lupa"/></svg><input type="search" placeholder="Busca buzos, mugs, Navidad, dotación…" aria-label="Buscar en Tránsfer!"><button class="redondo" data-cerrar-buscador aria-label="Cerrar">×</button></div>
+    <div class="buscador-caja"><svg><use href="#lupa"/></svg><input type="search" placeholder="Busca buzos, polos, mugs, Navidad…" aria-label="Buscar en Tránsfer!"><button class="redondo" data-cerrar-buscador aria-label="Cerrar">×</button></div>
     <div class="buscador-res" aria-live="polite"></div></div>`);
   const bus = document.querySelector('.buscador'), busIn = bus.querySelector('input'), busRes = bus.querySelector('.buscador-res');
-  const sugeridos = '<p class="bus-t">Lo más buscado</p><div class="bus-chips">' + ['Buzos', 'Camisetas', 'Mugs', 'Navidad', 'Dotación', 'Termos'].map(x => `<button type="button">${x}</button>`).join('') + '</div>';
+  const sugeridos = '<p class="bus-t">Lo más buscado</p><div class="bus-chips">' + ['Camisetas', 'Buzos', 'Polos', 'Mugs', 'Navidad', 'Termos'].map(x => `<button type="button">${x}</button>`).join('') + '</div>';
   function buscar() {
     const q = sinTildes(busIn.value.trim());
     if (!q) { busRes.innerHTML = sugeridos; return; }
-    const prods = CATALOGO.filter(p => sinTildes(p.nombre + ' ' + p.cat + ' ' + p.sub + ' ' + p.color).includes(q));
+    const prods = CATALOGO.filter(p => sinTildes(p.nombre + ' ' + p.cat + ' ' + p.sub + ' ' + (p.colores || []).map(c => c[0]).join(' ') + (p.cat === 'Polos' ? ' dotación uniforme' : '')).includes(q));
     const pags = PAGINAS.filter(([t, , d]) => sinTildes(t + ' ' + d).includes(q));
     busRes.innerHTML = (prods.length || pags.length)
-      ? (prods.length ? '<p class="bus-t">Productos</p>' + prods.slice(0, 6).map(p => `<a class="bus-item" href="producto.html?p=${p.id}"><img class="${p.tono}" src="${p.img}" alt=""><span><b>${p.nombre}</b><small>${p.cat} · ${p.sub}</small></span></a>`).join('') : '')
+      ? (prods.length ? '<p class="bus-t">Productos</p>' + prods.slice(0, 6).map(p => `<a class="bus-item" href="producto.html?p=${p.id}"><img class="${p.tono}" src="${p.img}" alt=""><span><b>${p.nombre}</b><small>${p.sub} · ${pesos(p.precio)}</small></span></a>`).join('') : '')
         + (pags.length ? '<p class="bus-t">Páginas</p>' + pags.map(([t, u, d]) => `<a class="bus-item pag" href="${u}"><i>→</i><span><b>${t}</b><small>${d}</small></span></a>`).join('') : '')
       : `<p class="bus-vacio">No encontramos «${busIn.value.replace(/[<>]/g, '')}». <a href="${WA}${encodeURIComponent('Hola Tránsfer!, busco: ' + busIn.value)}">Pregúntanos por WhatsApp →</a></p>`;
   }
@@ -341,7 +331,7 @@
   /* ───── Cantidad ───── */
   document.querySelectorAll('.cantidad').forEach(c => {
     const inp = c.querySelector('input');
-    c.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; inp.value = Math.max(1, (+inp.value || 1) + (b.dataset.mas ? 1 : -1)); });
+    c.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; inp.value = Math.max(1, (+inp.value || 1) + ('mas' in b.dataset ? 1 : -1)); inp.dispatchEvent(new Event('input', {bubbles: true})); });
   });
 
   /* ───── Saludo de WhatsApp ───── */

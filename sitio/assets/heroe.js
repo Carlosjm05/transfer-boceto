@@ -4,12 +4,12 @@
 (() => {
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const vit = $('#vitrina'); if (!vit || !window.TR_PRENDAS) return;
-  const {PRENDAS, vistaDe, areaDe, svgDe} = window.TR_PRENDAS;
+  const {PRENDAS, vistaDe, areaDe, svgDe, fondoDe, tiposDe} = window.TR_PRENDAS, {pesos} = window.TR_DATOS;
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const ORDEN = ['buzo', 'camiseta', 'gorra', 'mug', 'termo'];
-  const PALABRA = {buzo: 'buzos', camiseta: 'camisetas', gorra: 'gorras', mug: 'mugs', termo: 'termos'};
-  const COLOR_DEMO = {buzo: '#1C2A4C', camiseta: '#F4C430', gorra: '#7C1D3B', mug: '#FFFFFF', termo: '#FFFFFF'};
-  const STICKER = {buzo: 'estrella', camiseta: 'rompecabezas', gorra: 'estrella', mug: 'navidad', termo: 'estrella'};
+  const ORDEN = ['buzo', 'camiseta', 'polo', 'gorra', 'mug', 'termo'];
+  const PALABRA = {buzo: 'buzos', camiseta: 'camisetas', polo: 'polos', gorra: 'gorras', mug: 'mugs', termo: 'termos'};
+  const COLOR_DEMO = {buzo: '#1D3C78', camiseta: '#F4C430', polo: '#1F8A4C', gorra: '#D0202E', mug: '#FFFFFF', termo: '#FFFFFF'};
+  const STICKER = {buzo: 'estrella', camiseta: 'rompecabezas', polo: 'estrella', gorra: 'estrella', mug: 'navidad', termo: 'estrella'};
   const S = {prod: 'buzo', color: COLOR_DEMO.buzo, texto: '', auto: !reducido};
   const prenda = $('#v-prenda'), rota = $('#rota'), entrada = $('#nombre-h');
   const claro = hex => { const n = parseInt(hex.slice(1), 16); return (.299 * (n >> 16 & 255) + .587 * (n >> 8 & 255) + .114 * (n & 255)) / 255 > .6; };
@@ -20,13 +20,13 @@
     prenda.style.aspectRatio = w + ' / ' + h;
     prenda.innerHTML = `<div class="v-capa">${svgDe(S.prod, 'frente', 'base', S.color)}</div>
       <div class="v-area" style="left:${pc(ax, w)};top:${pc(ay, h)};width:${pc(aw, w)};height:${pc(ah, h)}">
-        <span class="v-texto" style="color:${claro(S.color) ? '#053468' : '#FECF03'}"></span>
+        <span class="v-texto" style="color:${claro(fondoDe(S.prod, S.color)) ? '#053468' : '#FECF03'}"></span>
         <img class="v-sticker" src="../img/ilus/${STICKER[S.prod]}.webp" alt=""></div>
       <div class="v-capa v-sombra">${svgDe(S.prod, 'frente', 'sombra', S.color)}</div>
       ${v.brillo ? `<div class="v-capa v-brillo">${svgDe(S.prod, 'frente', 'brillo', S.color)}</div>` : ''}`;
     $$('#v-prods button').forEach(b => b.classList.toggle('on', b.dataset.p === S.prod));
     $('#v-colores').innerHTML = PRENDAS[S.prod].colores.map(([n, c]) => `<button type="button" style="--c:${c}" data-c="${c}" class="${c === S.color ? 'on' : ''}" aria-label="Color ${n}" title="${n}"></button>`).join('');
-    $('#v-tec').textContent = PRENDAS[S.prod].tecnica === 'DTF' ? 'Estampado DTF · tela clara u oscura' : 'Sublimación · el diseño queda dentro del material';
+    $('#v-tec').textContent = (PRENDAS[S.prod].tecnica === 'DTF' ? 'Estampado DTF' : 'Sublimación') + ' · desde ' + pesos(Math.min(...tiposDe(S.prod).map(x => x.precio)));
   }
   function ajustarTexto(t) {
     const el = $('.v-texto'), area = $('.v-area'); if (!el || !area) return;

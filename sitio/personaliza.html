@@ -5,17 +5,17 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Personalizador en línea: diseña tu camiseta, buzo, gorra o mug · Tránsfer!</title>
-<meta name="description" content="Escribe tu frase, sube tu logo o tu foto y mira cómo queda en la prenda al instante. Envía el diseño por WhatsApp y te cotizamos sin compromiso.">
+<meta name="description" content="Escribe tu frase, sube tu logo o tu foto y mira cómo queda en la prenda al instante. Mira el precio y envía el pedido por WhatsApp.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_CO">
 <meta property="og:site_name" content="Tránsfer!">
 <meta property="og:title" content="Diseña tu camiseta, buzo, gorra o mug en línea · Tránsfer!">
-<meta property="og:description" content="Escribe tu frase, sube tu logo o tu foto y mira cómo queda en la prenda al instante. Envía el diseño por WhatsApp y te cotizamos sin compromiso.">
+<meta property="og:description" content="Escribe tu frase, sube tu logo o tu foto y mira cómo queda en la prenda al instante. Mira el precio y envía el pedido por WhatsApp.">
 <meta property="og:image" content="../img/heroe-buzo-azul.webp">
 <meta name="theme-color" content="#053468">
 <link rel="icon" href="../recursos/favicon.svg" type="image/svg+xml">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Inicio", "item": "index.html"}, {"@type": "ListItem", "position": 2, "name": "Personaliza", "item": "personaliza.html"}]}</script>
-<link rel="stylesheet" href="assets/sistema.css?v=e130ffc4">
+<link rel="stylesheet" href="assets/sistema.css?v=8bb46786">
 <style>
 @font-face{font-family:'Anton';src:url(../recursos/Anton-Regular.ttf) format('truetype');font-display:swap}
 .intro-p{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;padding-top:18px;padding-bottom:18px}
@@ -76,7 +76,11 @@
 .hoja-p h3{font-size:19px;font-weight:900;text-transform:uppercase;color:var(--tinta);margin:4px 0 12px}
 .hoja-p h3:not(:first-child){margin-top:22px}
 .et{display:block;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta);margin:14px 0 8px}
-.prods-p{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.prods-p{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.tipos-p{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.tipos-p[hidden]{display:none}
+.tipos-p button{border:2px solid var(--tinta);border-radius:14px;background:#fff;padding:7px 12px;font:inherit;text-align:left;cursor:pointer;color:var(--tinta);transition:transform .2s var(--rebote)}
+.tipos-p button:hover{transform:translateY(-2px)}.tipos-p button.on{background:var(--amarillo);box-shadow:3px 3px 0 var(--tinta)}
+.tipos-p b{display:block;font-size:12.5px;font-weight:900;line-height:1.15}.tipos-p small{font-size:12px;font-weight:700}
 .prods-p button{border:2px solid var(--tinta);border-radius:16px;background:#fff;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:transform .2s var(--rebote)}
 .prods-p button:hover{transform:translateY(-2px)}
 .prods-p button.on{background:var(--amarillo);box-shadow:3px 3px 0 var(--tinta)}
@@ -192,7 +196,7 @@
 .banda-dj:hover i{background:var(--amarillo)}
 @media (max-width:1080px){.encabezado{position:relative!important;top:0!important;transform:none!important}.vistas.una{display:none}.previa-cil{gap:6px;margin-top:6px}.previa-cil figure{border-radius:10px;padding:1px 2px 3px}.previa-cil canvas{height:54px}.previa-cil figcaption{font-size:8.5px;line-height:1.1}}
 @media (max-width:1080px){.editor{grid-template-columns:1fr}.escenario-col{position:sticky;top:6px;z-index:40;padding:8px 10px}.barra-esc{margin-bottom:6px}.area-et .largo{display:none}.area-et{font-size:10px;top:-17px}.estado-esc{font-size:12px;margin-top:6px;display:none}.estado-esc:has(.alerta){display:block}.escena-p{border-radius:14px}}
-@media (max-width:640px){.prods-p{grid-template-columns:repeat(5,1fr);gap:5px}.ico-p{width:40px;height:40px}.prods-p b{font-size:9.5px}.prods-p small{display:none}.agregar{grid-template-columns:repeat(4,1fr)}.agregar button{font-size:10px;padding:10px 2px}.plantillas-p{grid-template-columns:1fr}.filas-c{grid-template-columns:1fr}.hoja-p{padding:16px}.acc-esc button{padding:6px 9px;font-size:11.5px}.escenario-col{padding:10px}}
+@media (max-width:640px){.prods-p{grid-template-columns:repeat(3,1fr);gap:6px}.ico-p{width:40px;height:40px}.prods-p b{font-size:9.5px}.prods-p small{font-size:9.5px}.agregar{grid-template-columns:repeat(4,1fr)}.agregar button{font-size:10px;padding:10px 2px}.plantillas-p{grid-template-columns:1fr}.filas-c{grid-template-columns:1fr}.hoja-p{padding:16px}.acc-esc button{padding:6px 9px;font-size:11.5px}.escenario-col{padding:10px}}
 </style>
 </head>
 <body data-pagina="personaliza" class="cargando">
@@ -203,8 +207,8 @@
     <h1 class="h1" data-palabras>Personaliza <span class="pegada">en línea</span></h1>
   </div>
   <div>
-    <p class="lead">Diseña tu camiseta, buzo, gorra, mug o termo: textos, tu logo, fotos y stickers. Lo ves puesto al instante y nos llega con todas las medidas.</p>
-    <ul class="garantias"><li><svg><use href="#estrella"/></svg>Frente, espalda y mugs completos</li><li><svg><use href="#estrella"/></svg>Medidas en centímetros</li><li><svg><use href="#estrella"/></svg>Un nombre por prenda</li><li><svg><use href="#estrella"/></svg>Ficha para el taller</li></ul>
+    <p class="lead">Diseña tu camiseta, buzo, polo, gorra, mug o termo: textos, tu logo, fotos y stickers. Lo ves puesto al instante, con el precio, y nos llega con todas las medidas.</p>
+    <ul class="garantias"><li><svg><use href="#estrella"/></svg>Frente, espalda y mugs completos</li><li><svg><use href="#estrella"/></svg>Medidas en centímetros</li><li><svg><use href="#estrella"/></svg>Nombres sin costo</li><li><svg><use href="#estrella"/></svg>Ficha para el taller</li></ul>
   </div>
 </section>
 
@@ -220,12 +224,13 @@
   </div>
 
   <div class="panel-col">
-    <button type="button" class="banda-dj" data-disenamelo><span><b>¿Prefieres que lo hagamos nosotros?</b><small>Cuéntanos la idea y lo diseñamos por ti</small></span><i>→</i></button>
+    <button type="button" class="banda-dj" data-disenamelo><span><b>¿Prefieres que lo hagamos nosotros?</b><small>Cuéntanos la idea y lo diseñamos por ti, sin costo</small></span><i>→</i></button>
     <nav class="pasos-p" id="pasos-p" aria-label="Pasos"><button type="button" data-paso="1" class="on"><b>1</b>Producto</button><button type="button" data-paso="2"><b>2</b>Diseño</button><button type="button" data-paso="3"><b>3</b>Tallas</button><button type="button" data-paso="4"><b>4</b>Enviar</button></nav>
 
     <div class="hoja-p on" data-paso="1">
       <h3>¿Qué vas a personalizar?</h3>
       <div class="prods-p" id="prods-p"></div>
+      <div class="tipos-p" id="tipos-p" role="group" aria-label="Tipo" hidden></div>
       <h3>Color: <span id="color-nombre" style="color:var(--vino)"></span></h3>
       <div class="colores-p" id="colores-p"></div>
       <div id="otro-color" hidden></div>
@@ -255,6 +260,8 @@
       <h3>¿Cuántas y de qué talla?</h3>
       <div id="tallas-c"></div>
       <p class="total-u">Total: <span id="total-u"></span></p>
+      <p class="nota-r" id="precio-p"></p>
+      <p class="nota-r" id="nota-nino" hidden><b>Talla de niño:</b> escríbenos en las notas del paso 4 qué talla necesitas.</p>
       <div class="siguiente"><button type="button" class="btn blanco" data-ir="2">← Diseño</button><button type="button" class="btn" data-ir="4">Siguiente: revisar <i>→</i></button></div>
     </div>
 
@@ -270,7 +277,7 @@
         <button type="button" class="btn amarillo" id="agregar-p">Agregar al pedido <i>+</i></button>
       </div>
       <div class="sec-r" style="margin-top:12px"><button type="button" id="descargar-p">Descargar ficha (PNG)</button><button type="button" id="guardar-p">Guardar diseño</button><button type="button" id="enlace-p">Copiar enlace</button></div>
-      <p class="nota-r">En el celular, «Enviar por WhatsApp» comparte la ficha y tus imágenes de una vez. En computador se descarga la ficha y se abre el chat con el mensaje listo: solo adjúntala. Las medidas y colores se confirman antes de producir.</p>
+      <p class="nota-r">En el celular, «Enviar por WhatsApp» comparte la ficha y tus imágenes de una vez. En computador se descarga la ficha y se abre el chat con el mensaje listo: solo adjúntala. Antes de producir te confirmamos el diseño por WhatsApp.</p>
       <div class="siguiente"><button type="button" class="btn blanco" data-ir="3">← Tallas</button></div>
     </div>
   </div>
@@ -293,8 +300,9 @@
 
 <dialog class="dlg-dis" id="dlg-disenos" aria-label="Mis diseños"><h2>Mis diseños</h2><div id="lista-dis"></div><div class="siguiente"><button type="button" class="btn blanco" data-cerrar-dlg>Cerrar</button></div></dialog>
 <div class="aviso-p" id="aviso-p" role="status" aria-live="polite"></div>
-<script src="assets/sitio.js?v=8e9aa60a"></script>
-<script src="assets/prendas.js?v=7c893162"></script>
-<script src="assets/personalizador.js?v=ae164f46"></script>
+<script src="assets/datos.js?v=9a51c860"></script>
+<script src="assets/sitio.js?v=87475572"></script>
+<script src="assets/prendas.js?v=4a0e341f"></script>
+<script src="assets/personalizador.js?v=ed5c7e8b"></script>
 </body>
 </html>

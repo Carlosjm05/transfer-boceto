@@ -9,7 +9,14 @@
   const esc = t => String(t).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const cm = n => n.toFixed(1).replace('.', ',');
 
-  const {PRENDAS, vistaDe, vistasDe, areaDe, svgDe, imgDeSvg, oscuro} = window.TR_PRENDAS;   // dibujo de prendas: assets/prendas.js
+  const {PRENDAS, vistaDe, vistasDe, areaDe, svgDe: dibujo, imgDeSvg, oscuro, tiposDe, fondoDe} = window.TR_PRENDAS;   // dibujo de prendas: assets/prendas.js
+  const {producto: prodDe, pesos, unidad, textoBaja} = window.TR_DATOS;   // precios y colores reales: assets/datos.js
+  // Cada prenda tiene uno o varios tipos (por ejemplo, 3 camisetas), y cada tipo es un producto con su precio
+  const tipo = () => tiposDe(S.prod).find(x => x.id === S.tipo) || tiposDe(S.prod)[0];
+  const colores = () => tipo().colores;
+  const svgDe = (p, v, capa, color) => dibujo(p, v, capa, color, p === S.prod ? tipo().id : undefined);
+  const dosLados = () => !!tipo().dos && ['frente', 'espalda'].every(k => (S.capas[k] || []).length);
+  const precioU = () => unidad(tipo(), {dosLados: dosLados(), total: totalUnidades()});
 
   /* ═════════ Letras ═════════ */
   const FUENTES = {
@@ -53,14 +60,16 @@
   const IMGS = {};       // id -> {src, sinFondo, w, h, nombre, archivo}
   const STICKERS = ['estrella', 'rompecabezas', 'navidad', 'mascota', 'gorra', 'taza', 'trio', 'camion', 'lapiz', 'manos'];
   STICKERS.forEach(n => { IMGS['st:' + n] = {src: '../img/ilus/' + n + '.webp', nombre: 'Sticker ' + n, sticker: true}; });
-  const S = {prod: 'buzo', color: '#1C2A4C', vista: 'frente', capas: {}, sel: null, guias: true, modo: 'tallas', tallas: {M: 1}, cant: 1, nombres: [{nombre: '', talla: 'M'}], notas: '', cliente: '', ciudad: '', otro: null};   // otro: null o el texto del color que no está en la lista
+  const S = {prod: 'buzo', tipo: 'buzo', color: '#1D3C78', vista: 'frente', capas: {}, sel: null, guias: true, modo: 'tallas', tallas: {M: 1}, cant: 1, nombres: [{nombre: '', talla: 'M'}], notas: '', cliente: '', ciudad: '', otro: null};   // otro: null o el texto del color que no está en la lista
   let hist = [], hi = -1, codigo = null;
   const capasVista = (v = S.vista) => (S.capas[v] ||= []);
   const nuevoId = () => 'e' + Math.random().toString(36).slice(2, 8);
   const vista0 = () => vistasDe(PRENDAS[S.prod])[0][0];
   const vistaBuena = () => { const v = vistaDe(S.prod, S.vista); if (!v || v.soloDibujo) S.vista = vista0(); };
+  // El tipo siempre es de la prenda escogida, y el color, uno de los que se manejan en ese tipo (salvo «Otro»)
+  const tipoBueno = () => { S.tipo = tipo().id; if (S.otro === null && !colores().some(c => c[1] === S.color)) S.color = colores()[0][1]; };
   const claro = hex => { const n = parseInt(hex.slice(1), 16); return (.299 * (n >> 16 & 255) + .587 * (n >> 8 & 255) + .114 * (n & 255)) / 255 > .6; };
-  const colorNombre = () => { const l = (PRENDAS[S.prod].colores.find(c => c[1] === S.color) || [])[0]; if (S.otro === null) return l || S.color.toUpperCase(); const t = S.otro.trim(), m = PRENDAS[S.prod].tecnica === 'DTF' ? ` (muestra ${S.color.toUpperCase()})` : ''; return `Otro: ${t || 'por definir'}${m}, por confirmar`; };
+  const colorNombre = () => { const l = (colores().find(c => c[1] === S.color) || [])[0]; if (S.otro === null) return l || S.color.toUpperCase(); const t = S.otro.trim(), m = PRENDAS[S.prod].tecnica === 'DTF' ? ` (muestra ${S.color.toUpperCase()})` : ''; return `Otro: ${t || 'por definir'}${m}, por confirmar`; };
   // El mug y el termo se diseñan extendidos (vista «vuelta»). Al pasar de una prenda a un mug, o al abrir un diseño viejo, se copia lo que había.
   function prepararCapas() {
     const P = PRENDAS[S.prod], copia = (l, f) => (l || []).map(e => Object.assign(JSON.parse(JSON.stringify(e)), {id: nuevoId()}, f(e)));
@@ -73,16 +82,16 @@
   const elSel = () => capasVista().find(e => e.id === S.sel);
 
   function nuevoTexto(extra = {}) { return Object.assign({id: nuevoId(), tipo: 'texto', x: .5, y: .3, w: .7, rot: 0, texto: 'TU NOMBRE', fuente: 'pop', color: '#FECF03', contorno: false, colorBorde: T, grosor: 3, curva: 0, variable: false}, extra); }
-  function instantanea() { return JSON.stringify({prod: S.prod, color: S.color, otro: S.otro, capas: S.capas}); }
+  function instantanea() { return JSON.stringify({prod: S.prod, tipo: S.tipo, color: S.color, otro: S.otro, capas: S.capas}); }
   function guardarHist() { const s = instantanea(); if (hist[hi] === s) return; hist = hist.slice(0, hi + 1); hist.push(s); if (hist.length > 80) hist.shift(); hi = hist.length - 1; codigo = null; botonesHist(); guardarBorrador(); }
-  function restaurar(s) { const o = JSON.parse(s); S.prod = o.prod; S.color = o.color; S.otro = o.otro ?? null; S.capas = o.capas; S.sel = null; vistaBuena(); todo(); }
+  function restaurar(s) { const o = JSON.parse(s); S.prod = o.prod; S.tipo = o.tipo; S.color = o.color; S.otro = o.otro ?? null; S.capas = o.capas; S.sel = null; tipoBueno(); vistaBuena(); todo(); }
   const deshacer = () => { if (hi > 0) { hi--; restaurar(hist[hi]); botonesHist(); guardarBorrador(); } };
   const rehacer = () => { if (hi < hist.length - 1) { hi++; restaurar(hist[hi]); botonesHist(); guardarBorrador(); } };
   function botonesHist() { $('#deshacer').disabled = hi <= 0; $('#rehacer').disabled = hi >= hist.length - 1; }
   function guardarBorrador() {
     const usadas = new Set(Object.values(S.capas).flat().filter(e => e.img && !e.img.startsWith('st:')).map(e => e.img));
     const imgs = {}; usadas.forEach(id => { if (IMGS[id]) imgs[id] = {src: IMGS[id].src, w: IMGS[id].w, h: IMGS[id].h, nombre: IMGS[id].nombre}; });
-    const b = {prod: S.prod, color: S.color, otro: S.otro, vista: S.vista, capas: S.capas, modo: S.modo, tallas: S.tallas, cant: S.cant, nombres: S.nombres, notas: S.notas, imgs};
+    const b = {prod: S.prod, tipo: S.tipo, color: S.color, otro: S.otro, vista: S.vista, capas: S.capas, modo: S.modo, tallas: S.tallas, cant: S.cant, nombres: S.nombres, notas: S.notas, imgs};
     if (!guardarLS('transfer-editor', b)) { b.imgs = {}; guardarLS('transfer-editor', b); }
   }
 
@@ -92,7 +101,7 @@
     const v = vistaDe(S.prod, S.vista), [w, h] = v.vb, [ax, ay, aw, ah] = areaDe(v);
     const pc = (n, t) => (n / t * 100) + '%';
     escena.style.aspectRatio = w + ' / ' + h; escena.dataset.ar = w / h; ajustarEscena();
-    const n = parseInt(S.color.slice(1), 16), lum = (.299 * (n >> 16 & 255) + .587 * (n >> 8 & 255) + .114 * (n & 255)) / 255;
+    const n = parseInt(fondoDe(S.prod, S.color, S.tipo).slice(1), 16), lum = (.299 * (n >> 16 & 255) + .587 * (n >> 8 & 255) + .114 * (n & 255)) / 255;
     escena.classList.toggle('oscura', lum < .45);
     const etiqueta = `<span class="area-et"><span class="largo">${v.sangrado ? 'De borde a borde' : 'Área de impresión'} · </span>${cm(v.cm)} × ${cm(v.cm * ah / aw)} cm</span>`;
     escena.innerHTML = `<div class="capa-p base">${svgDe(S.prod, S.vista, 'base', S.color)}</div>
@@ -197,21 +206,24 @@
 
   /* ═════════ Paso 1: producto y color ═════════ */
   function panelProducto() {
-    $('#prods-p').innerHTML = Object.entries(PRENDAS).map(([k, p]) => `<button type="button" data-p="${k}" class="${k === S.prod ? 'on' : ''}" aria-pressed="${k === S.prod}"><span class="ico-p">${svgDe(k, 'frente', 'base', '#E6E0D2')}</span><b>${p.corto || p.nombre}</b><small>${p.tecnica}</small></button>`).join('');
-    const P = PRENDAS[S.prod];
-    $('#colores-p').innerHTML = P.colores.map(([n, h]) => `<button type="button" style="--c:${h}" data-c="${h}" class="${h === S.color && S.otro === null ? 'on' : ''}" aria-label="${n}" title="${n}"></button>`).join('') + `<button type="button" class="otro-c${S.otro !== null ? ' on' : ''}" data-otro aria-pressed="${S.otro !== null}"><i></i>Otro</button>`;
+    $('#prods-p').innerHTML = Object.entries(PRENDAS).map(([k, p]) => `<button type="button" data-p="${k}" class="${k === S.prod ? 'on' : ''}" aria-pressed="${k === S.prod}"><span class="ico-p">${svgDe(k, 'frente', 'base', '#E6E0D2')}</span><b>${p.corto || p.nombre}</b><small>Desde ${pesos(Math.min(...tiposDe(k).map(x => x.precio)))}</small></button>`).join('');
+    const P = PRENDAS[S.prod], T1 = tipo(), varios = tiposDe(S.prod);
+    $('#tipos-p').hidden = varios.length < 2; $('#tipos-p').innerHTML = varios.map(x => `<button type="button" data-t="${x.id}" class="${x.id === T1.id ? 'on' : ''}" aria-pressed="${x.id === T1.id}"><b>${x.corto}</b><small>${pesos(x.precio)}</small></button>`).join('');
+    $('#colores-p').innerHTML = colores().map(([n, h]) => `<button type="button" style="--c:${h}" data-c="${h}" class="${h === S.color && S.otro === null ? 'on' : ''}" aria-label="${n}" title="${n}"></button>`).join('') + `<button type="button" class="otro-c${S.otro !== null ? ' on' : ''}" data-otro aria-pressed="${S.otro !== null}"><i></i>Otro</button>`;
     const oc = $('#otro-color'); oc.hidden = S.otro === null;
-    if (S.otro !== null && !oc.contains(document.activeElement)) { const tela = P.tecnica === 'DTF'; oc.innerHTML = `<label class="et" for="otro-txt">¿Qué color quieres?</label><div class="otro-f">${tela ? `<input type="color" id="otro-hex" value="${S.color}" aria-label="Muestra del color">` : ''}<input type="text" id="otro-txt" maxlength="60" value="${esc(S.otro)}" placeholder="${tela ? 'Ej.: verde militar' : S.prod === 'mug' ? 'Ej.: interior y asa amarillos' : 'Ej.: tapa negra'}"></div><p class="nota-r">${tela ? 'Elige una muestra parecida y escribe el nombre.' : `La parte estampada va sobre blanco; dinos si quieres otro color por dentro${S.prod === 'mug' ? ' o en el asa' : ' o en la tapa'}.`} Te confirmamos si lo tenemos antes de producir.</p>`; }
+    if (S.otro !== null && !oc.contains(document.activeElement)) { const tela = P.tecnica === 'DTF'; oc.innerHTML = `<label class="et" for="otro-txt">¿Qué color quieres?</label><div class="otro-f">${tela ? `<input type="color" id="otro-hex" value="${S.color}" aria-label="Muestra del color">` : ''}<input type="text" id="otro-txt" maxlength="60" value="${esc(S.otro)}" placeholder="${tela ? 'Ej.: verde militar' : S.prod === 'mug' ? 'Ej.: interior y asa rojos' : 'Ej.: tapa negra'}"></div><p class="nota-r">${tela ? 'Elige una muestra parecida y escribe el nombre.' : `La parte estampada va sobre blanco; dinos si quieres otro color por dentro${S.prod === 'mug' ? ' o en el asa' : ' o en la tapa'}.`} Te confirmamos si lo tenemos antes de producir.</p>`; }
     $('#color-nombre').textContent = S.otro === null ? colorNombre() : 'Otro';
-    $('#info-tec').innerHTML = P.tecnica === 'DTF'
-      ? `<b>Estampado DTF.</b> Funciona en tela clara u oscura y a todo color. Áreas de impresión: ${vistasDe(P).map(([, v]) => `${v.nombre.toLowerCase()} hasta ${cm(v.cm)} × ${cm(v.cm * areaDe(v)[3] / areaDe(v)[2])} cm`).join(' · ')}.`
-      : `<b>Sublimación.</b> El diseño queda dentro del material; por eso ${P.art} va en blanco. Tu diseño puede cubrirlo todo, de borde a borde: ${cm(P.vistas.vuelta.cm)} × ${cm(P.vistas.vuelta.cm * P.vistas.vuelta.area[3] / P.vistas.vuelta.area[2])} cm.`;
+    const precios = `<b>${T1.nombre}: ${pesos(T1.precio)}${T1.dos ? ` por un lado y ${pesos(T1.dos)} por los dos` : ''}.</b> ${T1.baja ? textoBaja(T1) + '. ' : ''}Nombres y diseño sin costo.<br>`;
+    $('#info-tec').innerHTML = precios + (P.tecnica === 'DTF'
+      ? `<b>Estampado DTF.</b> Funciona en tela clara u oscura y a todo color. ${P.tallas ? 'El tamaño máximo depende de la talla; estas medidas son de referencia' : 'Medida de referencia'}: ${vistasDe(P).map(([, v]) => `${v.nombre.toLowerCase()} ${cm(v.cm)} × ${cm(v.cm * areaDe(v)[3] / areaDe(v)[2])} cm`).join(' · ')}.`
+      : `<b>Sublimación.</b> El diseño queda dentro del material. Puede cubrirlo todo${S.prod === 'mug' ? ', de asa a asa' : ''}: ${cm(P.vistas.vuelta.cm)} × ${cm(P.vistas.vuelta.cm * P.vistas.vuelta.area[3] / P.vistas.vuelta.area[2])} cm.`);
   }
+  $('#tipos-p').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.tipo = b.dataset.t; tipoBueno(); renderEscena(); panelProducto(); vistasBar(); panelTallas(); guardarHist(); });
   $('#prods-p').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cambiarProducto(b.dataset.p); });
   function cambiarProducto(p) {
-    if (!PRENDAS[p]) return; const antes = PRENDAS[S.prod].tecnica; S.prod = p; const P = PRENDAS[p];
+    if (!PRENDAS[p]) return; const antes = PRENDAS[S.prod].tecnica; S.prod = p; S.tipo = tiposDe(p)[0].id; const P = PRENDAS[p];
     if (antes !== P.tecnica) S.otro = null;
-    if (S.otro === null && !P.colores.some(c => c[1] === S.color)) S.color = P.colores[0][1];
+    tipoBueno();
     prepararCapas(); S.sel = null; todo(); guardarHist();
   }
   $('#colores-p').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return;
@@ -223,13 +235,14 @@
     clearTimeout(escena._o); escena._o = setTimeout(guardarHist, 400);
   });
   function vistasBar() {
+    if ($('#precio-p')) pintarTotal();
     const P = PRENDAS[S.prod];
     $('#vistas').classList.toggle('una', vistasDe(P).length === 1); $('#vistas').innerHTML = vistasDe(P).map(([k, v]) => `<button type="button" data-v="${k}" class="${k === S.vista ? 'on' : ''}">${v.nombre}${(S.capas[k] || []).length ? `<i>${S.capas[k].length}</i>` : ''}</button>`).join('');
   }
   $('#vistas').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.vista = b.dataset.v; S.sel = null; todo(); guardarBorrador(); });
 
   /* ═════════ Paso 2: diseño ═════════ */
-  $('#add-texto').addEventListener('click', () => { agregar(nuevoTexto({texto: 'TU TEXTO', color: claro(S.color) ? '#053468' : '#FECF03', y: capasVista().length ? .6 : .35})); setTimeout(() => $('#t-texto')?.select(), 50); });
+  $('#add-texto').addEventListener('click', () => { agregar(nuevoTexto({texto: 'TU TEXTO', color: claro(fondoDe(S.prod, S.color, S.tipo)) ? '#053468' : '#FECF03', y: capasVista().length ? .6 : .35})); setTimeout(() => $('#t-texto')?.select(), 50); });
   $('#add-img').addEventListener('click', () => $('#archivo-p').click());
   $('#archivo-p').addEventListener('change', e => { const f = e.target.files[0]; if (f) cargarImagen(f); e.target.value = ''; });
   escena.addEventListener('dragover', e => { e.preventDefault(); escena.classList.add('soltando'); });
@@ -259,8 +272,8 @@
   $('#stickers-p').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; agregar({id: nuevoId(), tipo: 'imagen', img: 'st:' + b.dataset.s, x: .5, y: .45, w: vistaDe(S.prod, S.vista).sangrado ? .28 : .42, rot: 0}); $('#stickers-p').hidden = true; });
 
   const PLANTILLAS = [
-    {n: 'Nombre y número', d: 'En la espalda, como camiseta de equipo', prendas: ['camiseta', 'buzo'], arma: () => { S.modo = 'nombres'; return [['espalda', nuevoTexto({texto: 'NOMBRE', variable: true, fuente: 'poster', x: .5, y: .16, w: .78})], ['espalda', nuevoTexto({texto: '10', fuente: 'poster', x: .5, y: .58, w: .5})]]; }},
-    {n: 'Logo al pecho', d: 'Pequeño a la izquierda, como dotación', prendas: ['camiseta', 'buzo'], arma: () => [['frente', nuevoTexto({texto: 'TU LOGO', fuente: 'pop', x: .76, y: .14, w: .3})]], luego: 'Toca «Imagen o logo» para cambiarlo por el tuyo.'},
+    {n: 'Nombre y número', d: 'En la espalda, como camiseta de equipo', prendas: ['camiseta', 'buzo', 'polo'], arma: () => { S.modo = 'nombres'; return [['espalda', nuevoTexto({texto: 'NOMBRE', variable: true, fuente: 'poster', x: .5, y: .16, w: .78})], ['espalda', nuevoTexto({texto: '10', fuente: 'poster', x: .5, y: .58, w: .5})]]; }},
+    {n: 'Logo al pecho', d: 'Pequeño a la izquierda, como dotación', prendas: ['polo', 'camiseta', 'buzo'], arma: () => [['frente', nuevoTexto({texto: 'TU LOGO', fuente: 'pop', x: .76, y: .14, w: .3})]], luego: 'Toca «Imagen o logo» para cambiarlo por el tuyo.'},
     {n: 'Familia de Navidad', d: 'Sticker navideño y apellido en curva', prendas: ['camiseta', 'buzo'], arma: () => [['frente', nuevoTexto({texto: 'FAMILIA PÉREZ', curva: 38, x: .5, y: .16, w: .86, color: '#B30A51', contorno: true, colorBorde: '#FFFFFF'})], ['frente', {id: nuevoId(), tipo: 'imagen', img: 'st:navidad', x: .5, y: .52, w: .46, rot: 0}], ['frente', nuevoTexto({texto: 'NAVIDAD 2026', x: .5, y: .88, w: .7, color: '#1F9D55'})]]},
     {n: 'Promoción', d: 'Curso y año al frente, nombre en la espalda', prendas: ['buzo', 'camiseta'], arma: () => { S.modo = 'nombres'; return [['frente', nuevoTexto({texto: 'PROMOCIÓN', curva: 32, x: .5, y: .2, w: .82})], ['frente', nuevoTexto({texto: '2026', fuente: 'poster', x: .5, y: .62, w: .55})], ['espalda', nuevoTexto({texto: 'NOMBRE', variable: true, fuente: 'pop', x: .5, y: .12, w: .7})]]; }},
     {n: 'Frase centrada', d: 'Una frase grande en el pecho', prendas: null, arma: () => [['frente', nuevoTexto({texto: 'TU FRASE\nAQUÍ', x: .5, y: .45, w: .8})]]},
@@ -358,7 +371,13 @@
         <div class="nombres-t">${S.nombres.map((n, i) => `<div class="fila-n"><span>${i + 1}</span><input value="${esc(n.nombre)}" data-i="${i}" placeholder="Nombre" maxlength="24" aria-label="Nombre ${i + 1}"><select data-i="${i}" aria-label="Talla ${i + 1}">${P.tallas.map(t => `<option ${t === n.talla ? 'selected' : ''}>${t}</option>`).join('')}</select><button type="button" data-borrar="${i}" aria-label="Quitar">×</button></div>`).join('')}</div>
         <div class="acciones-el"><button type="button" id="mas-nombre">+ Agregar persona</button><button type="button" id="pegar-lista">Pegar una lista</button></div>
         <textarea id="lista-n" hidden rows="5" placeholder="Un nombre por línea. Opcional: la talla después de una coma.&#10;Ana, M&#10;Juan, L"></textarea>`);
-    $('#total-u').textContent = totalUnidades() + (totalUnidades() === 1 ? ' unidad' : ' unidades');
+    pintarTotal();
+  }
+  function pintarTotal() {
+    const n = totalUnidades(), u = precioU(), p = tipo(), falta = p.baja && n && n < p.baja.desde ? p.baja.desde - n : 0;
+    $('#total-u').textContent = n + (n === 1 ? ' unidad' : ' unidades') + (n ? ` · ${pesos(u * n)}` : '');
+    $('#precio-p').innerHTML = n ? `${pesos(u)} por unidad${p.dos ? (dosLados() ? ', por los dos lados' : ', por un lado') : ''}${p.baja && n >= p.baja.desde ? `, ya con ${pesos(p.baja.menos)} menos por pedir ${p.baja.desde} o más` : ''}.${falta ? ` Con ${falta} más, la unidad baja ${pesos(p.baja.menos)}.` : ''} El envío va aparte.` : '';
+    $('#nota-nino').hidden = !(PRENDAS[S.prod].tallas && (S.modo === 'nombres' ? S.nombres.some(x => x.talla === 'Niño') : S.tallas['Niño'] > 0));
   }
   const tc = $('#tallas-c');
   tc.addEventListener('click', e => {
@@ -370,13 +389,13 @@
   });
   tc.addEventListener('input', e => {
     const t = e.target;
-    if (t.matches('.paso-n input')) { const k = t.parentNode.dataset.k, v = Math.max(0, +t.value || 0); if (k === 'cant') S.cant = Math.max(1, v); else S.tallas[k] = v; $('#total-u').textContent = totalUnidades() + ' unidades'; guardarBorrador(); }
-    if (t.matches('.fila-n input')) { S.nombres[+t.dataset.i].nombre = t.value; $('#total-u').textContent = totalUnidades() + ' unidades'; clearTimeout(tc._t); tc._t = setTimeout(() => { renderCapas(); guardarBorrador(); }, 250); }
+    if (t.matches('.paso-n input')) { const k = t.parentNode.dataset.k, v = Math.max(0, +t.value || 0); if (k === 'cant') S.cant = Math.max(1, v); else S.tallas[k] = v; pintarTotal(); guardarBorrador(); }
+    if (t.matches('.fila-n input')) { S.nombres[+t.dataset.i].nombre = t.value; pintarTotal(); clearTimeout(tc._t); tc._t = setTimeout(() => { renderCapas(); guardarBorrador(); }, 250); }
   });
   tc.addEventListener('change', e => {
     const t = e.target;
-    if (t.matches('.fila-n select')) { S.nombres[+t.dataset.i].talla = t.value; guardarBorrador(); }
-    if (t.id === 'lista-n') { const P = PRENDAS[S.prod]; const filas = t.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [n, ta] = l.split(/[,;\t]/).map(s => s.trim()); return {nombre: n, talla: P.tallas.includes((ta || '').toUpperCase()) ? ta.toUpperCase() : 'M'}; });
+    if (t.matches('.fila-n select')) { S.nombres[+t.dataset.i].talla = t.value; pintarTotal(); guardarBorrador(); }
+    if (t.id === 'lista-n') { const P = PRENDAS[S.prod]; const filas = t.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [n, ta] = l.split(/[,;\t]/).map(s => s.trim()); return {nombre: n, talla: P.tallas.find(x => x.toUpperCase() === (ta || '').toUpperCase()) || (/^ni[nñ]/i.test(ta || '') ? 'Niño' : 'M')}; });
       if (filas.length) { S.nombres = S.nombres.filter(n => n.nombre.trim()).concat(filas); panelTallas(); renderCapas(); guardarBorrador(); aviso(filas.length + ' nombres agregados.'); } }
   });
 
@@ -402,11 +421,12 @@
     const cantidades = !P.tallas ? `${S.cant} ${S.cant === 1 ? 'unidad' : 'unidades'}` : S.modo === 'nombres'
       ? S.nombres.filter(n => n.nombre.trim()).map(n => `${n.nombre} (${n.talla})`).join(', ') || 'Sin nombres todavía'
       : Object.entries(S.tallas).filter(([, n]) => n > 0).map(([t, n]) => `${t} × ${n}`).join(', ') || 'Sin tallas todavía';
-    return {codigo, producto: P.nombre, color, tecnica: P.tecnica, total: totalUnidades(), cantidades, modoNombres: S.modo === 'nombres' && !!P.tallas, vistas: lineasVista, notas: S.notas.trim(), cliente: S.cliente.trim(), ciudad: S.ciudad.trim(),
+    const nU = totalUnidades(), vU = precioU();
+    return {codigo, producto: tipo().nombre, unidad: vU, valor: vU * nU, dos: dosLados(), color, tecnica: P.tecnica, total: totalUnidades(), cantidades, modoNombres: S.modo === 'nombres' && !!P.tallas, vistas: lineasVista, notas: S.notas.trim(), cliente: S.cliente.trim(), ciudad: S.ciudad.trim(),
       archivos: vistas.flatMap(([k]) => S.capas[k]).filter(e => e.img && IMGS[e.img] && !IMGS[e.img].sticker).map(e => IMGS[e.img])};
   }
   function textoWA(f) {
-    let t = `Hola Tránsfer!, quiero cotizar este diseño: *${f.codigo}*\n\n• Producto: ${f.producto} · color ${f.color} · ${f.tecnica}\n• ${f.modoNombres ? 'Nombres y tallas' : 'Cantidad'}: ${f.cantidades} (total ${f.total})\n`;
+    let t = `Hola Tránsfer!, quiero pedir este diseño: *${f.codigo}*\n\n• Producto: ${f.producto} · color ${f.color} · ${f.tecnica}\n• ${f.modoNombres ? 'Nombres y tallas' : 'Cantidad'}: ${f.cantidades} (total ${f.total})\n• Precio en la página: ${pesos(f.unidad)} por unidad${tipo().dos ? (f.dos ? ' (dos lados)' : ' (un lado)') : ''}, ${pesos(f.valor)} sin envío\n`;
     f.vistas.forEach(v => { t += `\n*${v.vista}*\n` + v.items.map(i => '- ' + i).join('\n') + '\n'; });
     if (f.notas) t += `\nNotas: ${f.notas}\n`;
     if (f.cliente || f.ciudad) t += `\n${f.cliente ? 'A nombre de ' + f.cliente : ''}${f.cliente && f.ciudad ? ', ' : ''}${f.ciudad ? 'envío a ' + f.ciudad : ''}\n`;
@@ -447,7 +467,7 @@
   async function renderCilindro(lado, ancho) {
     const cil = vistaDe(S.prod, 'vuelta').cil, L = cil.lados[lado], vt = L.vt, v = vistaDe(S.prod, vt), [w, h] = v.vb, k = ancho / w, c = document.createElement('canvas'); c.width = Math.round(w * k); c.height = Math.round(h * k);
     const x = c.getContext('2d'), arte = await arteExtendido(Math.max(700, ancho * 2));
-    const [base, som, bri] = await Promise.all(['base', 'sombra', 'brillo'].map(q => imgDeSvg(L.sinAsa && q === 'sombra' ? svgDe(S.prod, vt, q, '#FFFFFF').replace(/<path d="M410 190[^>]*opacity="\.12"\/>/, '') : svgDe(S.prod, vt, q, '#FFFFFF'))));
+    const [base, som, bri] = await Promise.all(['base', 'sombra', 'brillo'].map(q => imgDeSvg(L.sinAsa && q === 'sombra' ? svgDe(S.prod, vt, q, S.color).replace(/<path d="M410 190[^>]*opacity="\.12"\/>/, '') : svgDe(S.prod, vt, q, S.color))));
     const cx = v.espejo ? w - cil.cx : cil.cx, giro = L.giro, paso = 1 / k;
     x.scale(k, k); if (L.sinAsa) { x.beginPath(); x.rect(cx - cil.r - 1.5, 0, cil.r * 2 + 3, h); x.clip(); }
     if (base) x.drawImage(base, 0, 0, w, h);
@@ -514,7 +534,7 @@
     const mocks = await mockups(420);
     $('#mocks-r').innerHTML = mocks.map(m => `<figure><img src="${m.c.toDataURL('image/png')}" alt="Vista ${m.nombre}"><figcaption>${m.nombre}</figcaption></figure>`).join('');
     const vacio = !f.vistas.length;
-    $('#spec-r').innerHTML = `<li><b>Producto</b>${f.producto} · ${esc(f.color)} · ${f.tecnica}</li><li><b>${f.modoNombres ? 'Nombres' : 'Cantidad'}</b>${esc(f.cantidades)} <em>(${f.total} en total)</em></li>` +
+    $('#spec-r').innerHTML = `<li><b>Producto</b>${f.producto} · ${esc(f.color)} · ${f.tecnica}</li><li><b>${f.modoNombres ? 'Nombres' : 'Cantidad'}</b>${esc(f.cantidades)} <em>(${f.total} en total)</em></li><li><b>Precio</b>${pesos(f.unidad)} por unidad${tipo().dos ? (f.dos ? ', por los dos lados' : ', por un lado') : ''} · <em>${pesos(f.valor)} sin envío</em></li>` +
       f.vistas.map(v => `<li><b>${v.vista}</b><ol>${v.items.map(i => `<li>${esc(i)}</li>`).join('')}</ol></li>`).join('') +
       (vacio ? '<li class="alerta">Todavía no hay diseño. Vuelve al paso 2.</li>' : '') + (!f.total ? '<li class="alerta">Falta la cantidad o la lista de nombres (paso 3).</li>' : '');
     $('#enviar-p').disabled = $('#agregar-p').disabled = vacio || !f.total;
@@ -538,7 +558,7 @@
   $('#agregar-p').addEventListener('click', async () => {
     const f = ficha(), m = PRENDAS[S.prod].vistas.vuelta ? await renderCilindro(PRENDAS[S.prod].vistas.vuelta.cil.lados.findIndex(L => L.vt === 'frente'), 160) : await renderMockup((S.capas[S.vista] || []).length ? S.vista : vista0(), 160);
     guardarFicha(f);
-    window.TRANSFER.agregar({perso: true, nombre: `${f.producto} personalizado`.replace('Camiseta personalizado', 'Camiseta personalizada').replace('Gorra personalizado', 'Gorra personalizada'), img: m.toDataURL('image/webp', .8), tono: 't-crema', detalle: `${f.codigo} · ${f.color}${f.modoNombres ? ' · ' + f.total + ' nombres' : ''}`, talla: '—', cant: f.total || 1});
+    window.TRANSFER.agregar({id: tipo().id, dos: f.dos, perso: true, nombre: f.producto, img: m.toDataURL('image/webp', .8), tono: 't-crema', detalle: `${f.codigo} · ${f.color}${f.modoNombres ? ' · ' + f.total + ' nombres' : ''}`, talla: '—', cant: f.total || 1});
   });
   function guardarFicha(f) { const todas = leerLS('transfer-fichas', {}); todas[f.codigo] = textoWA(f); const llaves = Object.keys(todas); if (llaves.length > 20) delete todas[llaves[0]]; guardarLS('transfer-fichas', todas); }
 
@@ -546,7 +566,7 @@
   $('#guardar-p').addEventListener('click', async () => {
     const f = ficha(), m = PRENDAS[S.prod].vistas.vuelta ? await renderCilindro(PRENDAS[S.prod].vistas.vuelta.cil.lados.findIndex(L => L.vt === 'frente'), 180) : await renderMockup('frente', 180), lista = leerLS('transfer-disenos', []);
     const usadas = {}; Object.values(S.capas).flat().forEach(e => { if (e.img && !e.img.startsWith('st:') && IMGS[e.img]) usadas[e.img] = {src: IMGS[e.img].src, w: IMGS[e.img].w, h: IMGS[e.img].h, nombre: IMGS[e.img].nombre}; });
-    const d = {codigo: f.codigo, fecha: Date.now(), prod: S.prod, color: S.color, otro: S.otro, capas: S.capas, modo: S.modo, tallas: S.tallas, cant: S.cant, nombres: S.nombres, thumb: m.toDataURL('image/webp', .7), imgs: usadas};
+    const d = {codigo: f.codigo, fecha: Date.now(), prod: S.prod, tipo: S.tipo, color: S.color, otro: S.otro, capas: S.capas, modo: S.modo, tallas: S.tallas, cant: S.cant, nombres: S.nombres, thumb: m.toDataURL('image/webp', .7), imgs: usadas};
     const nueva = [d, ...lista.filter(x => x.codigo !== f.codigo)].slice(0, 12);
     if (guardarLS('transfer-disenos', nueva)) aviso('Diseño guardado en este navegador. Lo encuentras en «Mis diseños».');
     else { d.imgs = {}; guardarLS('transfer-disenos', [d, ...lista.filter(x => x.codigo !== f.codigo)].slice(0, 12)) ? aviso('Guardado, pero sin tus imágenes: son muy pesadas para el navegador.') : aviso('No se pudo guardar: el navegador no tiene espacio.'); }
@@ -554,7 +574,7 @@
   $('#enlace-p').addEventListener('click', async () => {
     const capas = JSON.parse(JSON.stringify(S.capas)); let quitadas = 0;
     Object.keys(capas).forEach(k => { capas[k] = capas[k].filter(e => { const ok = !e.img || e.img.startsWith('st:'); if (!ok) quitadas++; return ok; }); });
-    const datos = btoa(unescape(encodeURIComponent(JSON.stringify({prod: S.prod, color: S.color, otro: S.otro, capas})))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const datos = btoa(unescape(encodeURIComponent(JSON.stringify({prod: S.prod, tipo: S.tipo, color: S.color, otro: S.otro, capas})))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     const url = location.origin + location.pathname + '#d=' + datos;
     try { await navigator.clipboard.writeText(url); aviso('Enlace copiado.' + (quitadas ? ' Las imágenes que subiste no viajan en el enlace.' : '')); } catch (e) { prompt('Copia este enlace:', url); }
   });
@@ -572,9 +592,9 @@
   });
   function cargarDiseno(d) {
     Object.entries(d.imgs || {}).forEach(([id, i]) => { IMGS[id] = i; });
-    Object.assign(S, {prod: d.prod, color: d.color, otro: d.otro ?? null, capas: d.capas || {}, modo: d.modo || 'tallas', tallas: d.tallas || {M: 1}, cant: d.cant || 1, nombres: d.nombres?.length ? d.nombres : [{nombre: '', talla: 'M'}], vista: 'frente', sel: null});
+    Object.assign(S, {prod: d.prod, tipo: d.tipo, color: d.color, otro: d.otro ?? null, capas: d.capas || {}, modo: d.modo || 'tallas', tallas: d.tallas || {M: 1}, cant: d.cant || 1, nombres: d.nombres?.length ? d.nombres : [{nombre: '', talla: 'M'}], vista: 'frente', sel: null});
     Object.values(S.capas).flat().forEach(e => { if (e.img && !IMGS[e.img]) e.img = 'st:estrella'; });
-    prepararCapas(); todo(); guardarHist(); codigo = d.codigo || null;
+    tipoBueno(); prepararCapas(); todo(); guardarHist(); codigo = d.codigo || null;
   }
 
   /* ═════════ Pasos ═════════ */
@@ -595,12 +615,14 @@
   /* ═════════ Arranque ═════════ */
   const q = new URLSearchParams(location.search), hash = location.hash.match(/#d=([\w-]+)/);
   const borrador = leerLS('transfer-editor', null);
-  if (hash) { try { const o = JSON.parse(decodeURIComponent(escape(atob(hash[1].replace(/-/g, '+').replace(/_/g, '/'))))); Object.assign(S, {prod: o.prod, color: o.color, otro: o.otro ?? null, capas: o.capas}); } catch (e) {} }
-  else if (q.get('producto') && PRENDAS[q.get('producto')]) { S.prod = q.get('producto'); S.color = PRENDAS[S.prod].colores[0][1]; if (S.prod === 'buzo') S.color = '#1C2A4C'; const cq = (q.get('color') || '').toUpperCase(); if (PRENDAS[S.prod].colores.some(c => c[1].toUpperCase() === cq)) S.color = PRENDAS[S.prod].colores.find(c => c[1].toUpperCase() === cq)[1]; S.capas = {frente: [nuevoTexto({texto: q.get('texto') || 'TU NOMBRE', color: S.color === '#FFFFFF' ? '#053468' : '#FECF03', y: .35})]}; }
+  if (hash) { try { const o = JSON.parse(decodeURIComponent(escape(atob(hash[1].replace(/-/g, '+').replace(/_/g, '/'))))); Object.assign(S, {prod: o.prod, tipo: o.tipo, color: o.color, otro: o.otro ?? null, capas: o.capas}); } catch (e) {} }
+  else if (q.get('producto') && PRENDAS[q.get('producto')]) { S.prod = q.get('producto'); S.tipo = q.get('tipo'); S.tipo = tipo().id; S.color = colores()[0][1]; if (S.prod === 'buzo') S.color = '#1D3C78'; const cq = (q.get('color') || '').toUpperCase(); if (colores().some(c => c[1].toUpperCase() === cq)) S.color = colores().find(c => c[1].toUpperCase() === cq)[1]; S.capas = {frente: [nuevoTexto({texto: q.get('texto') || 'TU NOMBRE', color: claro(fondoDe(S.prod, S.color, S.tipo)) ? '#053468' : '#FECF03', y: .35})]}; }
   else if (q.get('texto')) { S.capas = {frente: [nuevoTexto({texto: q.get('texto').slice(0, 30), y: .35})]}; }
   else if (borrador && Object.values(borrador.capas || {}).flat().length) { Object.entries(borrador.imgs || {}).forEach(([id, i]) => { IMGS[id] = i; }); Object.assign(S, borrador); Object.values(S.capas).flat().forEach(e => { if (e.img && !IMGS[e.img]) e.img = 'st:estrella'; }); S.sel = null; }
   else S.capas = {frente: [nuevoTexto({y: .35})]};
-  prepararCapas(); todo(); guardarHist();
+  if (!PRENDAS[S.prod]) S.prod = 'buzo';
+  if (S.otro === null && S.tallas) Object.keys(S.tallas).forEach(k => { if (PRENDAS[S.prod].tallas && !PRENDAS[S.prod].tallas.includes(k)) delete S.tallas[k]; });   // borradores viejos con tallas que no se manejan
+  tipoBueno(); prepararCapas(); todo(); guardarHist();
   // repinta los textos cuando terminen de cargar las letras
   Promise.all(['900 40px Rubik', '500 40px Rubik', '300 40px Rubik', '400 40px Anton'].map(f => document.fonts.load(f))).catch(() => {}).finally(() => { renderCapas(); });
   window.PERSONALIZADOR = {S, ficha, textoWA, canvasFicha, renderMockup, arteExtendido};

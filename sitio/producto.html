@@ -4,17 +4,17 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Buzo personalizado con tu diseño · Tránsfer!</title>
-<meta name="description" content="Escoge el diseño o cámbialo por tu logo, tu foto o tu frase. Míralo puesto antes de pedir y recibe la cotización por WhatsApp. Envíos a toda Colombia.">
+<title>Producto personalizado con tu diseño · Tránsfer!</title>
+<meta name="description" content="Con tu logo, tu foto o tu frase, y el estampado incluido en el precio. Míralo puesto antes de pedir. Envíos a toda Colombia.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_CO">
 <meta property="og:site_name" content="Tránsfer!">
-<meta property="og:title" content="Buzo personalizado con tu diseño · Tránsfer!">
-<meta property="og:description" content="Escoge el diseño o cámbialo por tu logo, tu foto o tu frase. Míralo puesto antes de pedir y recibe la cotización por WhatsApp. Envíos a toda Colombia.">
+<meta property="og:title" content="Producto personalizado con tu diseño · Tránsfer!">
+<meta property="og:description" content="Con tu logo, tu foto o tu frase, y el estampado incluido en el precio. Míralo puesto antes de pedir. Envíos a toda Colombia.">
 <meta property="og:image" content="../img/heroe-buzo-azul.webp">
 <meta name="theme-color" content="#053468">
 <link rel="icon" href="../recursos/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/sistema.css?v=e130ffc4">
+<link rel="stylesheet" href="assets/sistema.css?v=8bb46786">
 <style>
 .ficha{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:start;padding-top:16px}
 .galeria-p{display:grid;grid-template-columns:90px 1fr;gap:16px;position:sticky;top:110px}
@@ -25,10 +25,10 @@
 .minis img{width:100%;height:100%;object-fit:contain}
 .minis img.cubre{object-fit:cover}
 .principal{position:relative;aspect-ratio:1/1.08;border:var(--borde);border-radius:var(--r-panel);box-shadow:var(--sombra-g);overflow:hidden;background:var(--amarillo);display:grid;place-items:center}
-.principal img{max-width:78%;max-height:82%;object-fit:contain;filter:drop-shadow(10px 10px 0 rgba(11,27,51,.85));transition:opacity .25s,transform .45s var(--rebote)}
-.principal img.cubre{max-width:none;max-height:none;width:100%;height:100%;object-fit:cover;filter:none}
+.principal img{position:absolute;inset:9% 11%;width:78%;height:82%;object-fit:contain;filter:drop-shadow(10px 10px 0 rgba(11,27,51,.85));transition:opacity .25s,transform .45s var(--rebote)}
+.principal img.cubre{inset:0;width:100%;height:100%;object-fit:cover;filter:none}
 .principal img.cambiando{opacity:0;transform:scale(.92) rotate(-3deg)}
-.principal .globo{left:18px;top:18px;transform:rotate(-5deg)}
+.principal .globo{z-index:2;left:18px;top:18px;transform:rotate(-5deg)}
 .principal .zoom-lupa{position:absolute;right:16px;bottom:16px}
 .info .h1{font-size:clamp(42px,4.6vw,68px);margin:14px 0 12px}
 .sellos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
@@ -39,10 +39,13 @@
 .precio img{width:62px}
 .opcion{margin-bottom:20px}
 .opcion>span{display:block;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--tinta);margin-bottom:10px}
-.muestras{display:flex;gap:10px}
+.muestras{display:flex;gap:10px;flex-wrap:wrap}
 .muestras button{width:40px;height:40px;border-radius:50%;border:var(--borde);transition:transform .2s var(--rebote)}
 .muestras button.on{box-shadow:0 0 0 3px var(--crema),0 0 0 6px var(--tinta);transform:scale(1.05)}
 .tallas{display:flex;gap:8px;flex-wrap:wrap}
+.tallas button{padding:0 14px}
+.opcion em{font-style:normal;color:var(--vino)}
+.nota-color{font-size:14px;background:#fff;border:2px dashed rgba(11,27,51,.3);border-radius:14px;padding:10px 14px}
 .tallas button{min-width:50px;height:50px;border:var(--borde);border-radius:14px;background:#fff;font-weight:800;color:var(--tinta);box-shadow:3px 3px 0 var(--tinta);transition:transform .15s,background .15s}
 .tallas button.on{background:var(--amarillo);transform:translate(-2px,-2px)}
 .comprar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:26px 0}
@@ -59,14 +62,14 @@
 .rel{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 .rel .tarjeta{min-height:320px}
 @media (max-width:1080px){.ficha{grid-template-columns:1fr}.galeria-p{position:relative;top:0}.rel{grid-template-columns:1fr 1fr}}
-@media (max-width:640px){.galeria-p{grid-template-columns:1fr}.minis{flex-direction:row;order:2;overflow-x:auto}.minis button{width:70px;height:70px;flex:none}.garantias{grid-template-columns:1fr}.puesto{grid-template-columns:1fr 1fr}.puesto .foto-tinta:nth-child(3){display:none}.rel{gap:14px}.rel .tarjeta{min-height:270px;padding:12px}.rel .tarjeta .img img{max-height:120px}.comprar .btn{width:100%;justify-content:space-between}}
+@media (max-width:640px){.info .h1{font-size:clamp(30px,9.2vw,42px)}.galeria-p{grid-template-columns:1fr}.minis{flex-direction:row;order:2;overflow-x:auto}.minis button{width:70px;height:70px;flex:none}.garantias{grid-template-columns:1fr}.puesto{grid-template-columns:1fr 1fr}.puesto .foto-tinta:nth-child(3){display:none}.rel{gap:14px}.rel .tarjeta{min-height:270px;padding:12px}.rel .tarjeta .img img{max-height:120px}.comprar .btn{width:100%;justify-content:space-between}}
 </style>
 </head>
 <body data-pagina="tienda" class="cargando">
 <main>
 <section class="seccion" style="padding-top:20px">
   <div class="env">
-    <div class="migas" data-revela><a href="index.html">Inicio</a>/<a href="tienda.html">Tienda</a>/<a id="miga-cat" href="tienda.html">Buzos</a>/<span id="miga-nom">Buzo estrella</span></div>
+    <div class="migas" data-revela><a href="index.html">Inicio</a>/<a href="tienda.html">Tienda</a>/<a id="miga-cat" href="tienda.html">Buzos</a>/<span id="miga-nom">Buzo con capota</span></div>
     <div class="ficha">
       <div class="galeria-p" data-revela>
         <div class="minis" id="minis"></div>
@@ -74,27 +77,30 @@
       </div>
       <div class="info">
         <span class="etiqueta" data-revela><svg><use href="#estrella"/></svg><span id="cat">Buzos</span></span>
-        <h1 class="h1" id="nombre" data-revela style="--d:1">Buzo estrella</h1>
-        <div class="sellos" data-revela style="--d:2"><span>DTF</span><span>Capota</span><span id="sello-color">Azul</span></div>
-        <p class="lead" id="desc" data-revela style="--d:3">Buzo con capota y estampado al frente. Llévalo con este diseño o cámbialo por tu logo, tu foto o tu frase: lo ves puesto antes de pedir.</p>
-        <div class="precio" data-revela style="--d:4"><img class="mece" src="../img/ilus/taza.webp" alt=""><div><b>Precio según cantidad</b><small>Agrégalo al pedido y te cotizamos por WhatsApp, sin compromiso.</small></div></div>
-        <div class="opcion" data-revela style="--d:5"><span>Color de la prenda</span><div class="muestras" data-grupo><button class="on" style="background:#053468" aria-label="Azul"></button><button style="background:#FECF03" aria-label="Amarillo"></button><button style="background:#01CFFA" aria-label="Cian"></button><button style="background:#B30A51" aria-label="Vino"></button><button style="background:#111" aria-label="Negro"></button></div></div>
-        <div class="opcion" data-revela style="--d:6" id="op-tallas"><span>Talla</span><div class="tallas" data-grupo data-tallas><button>XS</button><button>S</button><button class="on">M</button><button>L</button><button>XL</button><button>XXL</button></div></div>
+        <h1 class="h1" id="nombre" data-revela style="--d:1">Buzo con capota</h1>
+        <div class="sellos" id="sellos" data-revela style="--d:2"></div>
+        <p class="lead" id="desc" data-revela style="--d:3"></p>
+        <div class="precio" data-revela style="--d:4"><img class="mece" src="../img/ilus/taza.webp" alt=""><div><b id="precio-u"></b><small id="precio-n"></small></div></div>
+        <div class="opcion" data-revela style="--d:5" id="op-color"><span>Color: <em id="color-n"></em></span><div class="muestras" data-grupo data-colores></div></div>
+        <div class="opcion" data-revela style="--d:5" id="op-material"><span>Material</span><div class="tallas" data-grupo data-opciones></div></div>
+        <div class="opcion" data-revela style="--d:6" id="op-lados"><span>¿Por dónde va el estampado?</span><div class="tallas" data-grupo data-lados><button class="on" data-dos="0">Un lado</button><button data-dos="1">Dos lados</button></div></div>
+        <div class="opcion" data-revela style="--d:6" id="op-tallas"><span>Talla</span><div class="tallas" data-grupo data-tallas></div></div>
         <div class="comprar" data-revela style="--d:7">
           <div class="cantidad"><button aria-label="Menos">−</button><input data-cant value="1" aria-label="Cantidad"><button data-mas aria-label="Más">+</button></div>
-          <button class="btn" type="button" id="agregar" data-agregar="buzo-estrella" data-iman>Agregar al pedido <i>+</i></button>
+          <button class="btn" type="button" id="agregar" data-agregar="buzo" data-iman>Agregar al pedido <i>+</i></button>
           <a class="enlace" id="ir-perso" href="personaliza.html">Personalizar este <i>✦</i></a>
         </div>
         <div class="garantias" data-escalona>
-          <div><svg><use href="#i-calor"/></svg>Lo ves puesto antes de pedir</div>
+          <div><svg><use href="#i-pincel"/></svg>Te lo diseñamos sin costo</div>
           <div><svg><use href="#i-envio"/></svg>Envíos a toda Colombia</div>
-          <div><svg><use href="#i-chat"/></svg>Te asesoramos por WhatsApp</div>
+          <div><svg><use href="#i-chat"/></svg>Te confirmamos el diseño por WhatsApp</div>
         </div>
         <div class="acordeon" data-escalona>
-          <details open><summary>Detalles<i>+</i></summary><div class="resp" id="detalles">Capota con cordón y bolsillo canguro. El diseño se estampa con DTF: colores vivos que se ven igual en tela clara u oscura.</div></details>
-          <details id="d-tallas"><summary>Guía de tallas<i>+</i></summary><div class="resp"><table class="tabla-t"><tr><th>Talla</th><th>S</th><th>M</th><th>L</th><th>XL</th></tr><tr><td>Pecho (cm)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>Largo (cm)</td><td>—</td><td>—</td><td>—</td><td>—</td></tr></table><p style="font-size:13px;margin-top:8px">Las medidas exactas las confirma Tránsfer! según la prenda disponible.</p></div></details>
-          <details><summary>Técnica de estampado<i>+</i></summary><div class="resp">DTF para prendas de cualquier color. Sublimación para mugs, termos, llaveros y telas claras de poliéster.</div></details>
-          <details><summary>Envíos y cuidados<i>+</i></summary><div class="resp">Enviamos a toda Colombia. Para que el estampado dure: lava al revés, con agua fría y sin blanqueador, seca a la sombra y no planches encima del diseño.</div></details>
+          <details open><summary>Detalles<i>+</i></summary><div class="resp" id="detalles"></div></details>
+          <details><summary>Pago, tiempos y cambios<i>+</i></summary><div class="resp" id="resp-pago"></div></details>
+          <details id="d-tallas"><summary>Guía de tallas<i>+</i></summary><div class="resp">Manejamos S, M, L, XL, XXL y tallas de niño. Si tienes duda con la tuya, pregúntanos por WhatsApp antes de pedir: el cambio de talla solo se hace sin estampar.</div></details>
+          <details><summary>Técnica de estampado<i>+</i></summary><div class="resp">DTF para prendas de cualquier color. Sublimación para mugs, termos y accesorios.</div></details>
+          <details><summary>Envíos y cuidados<i>+</i></summary><div class="resp">Enviamos a toda Colombia por transportadora; el envío lo pagas tú, según la ciudad. En Piedecuesta y Bucaramanga también puedes recoger gratis en el taller o pedir mensajero. Para que el estampado dure: lava al revés, con agua fría y sin blanqueador, seca a la sombra y no planches encima del diseño.</div></details>
         </div>
       </div>
     </div>
@@ -117,43 +123,63 @@
   </div>
 </section>
 </main>
-<script src="assets/sitio.js?v=8e9aa60a"></script>
+<script src="assets/datos.js?v=9a51c860"></script>
+<script src="assets/sitio.js?v=87475572"></script>
 <script>
 const {CATALOGO, tarjeta} = window.TRANSFER;
-const id = new URLSearchParams(location.search).get('p') || 'buzo-estrella';
+const {pesos, unidad, textoBaja} = window.TR_DATOS;
+const id = new URLSearchParams(location.search).get('p') || 'buzo';
 const p = CATALOGO.find(x => x.id === id) || CATALOGO[0];
-const LIFESTYLE = {Buzos:'c-buzos', Camisetas:'c-camisetas', Gorras:'c-gorras', Mugs:'c-mugs', Termos:'c-termos', Llaveros:'c-llaveros', 'Dotación':'empresas-dotacion'};
-const PRENDA = ['Buzos','Camisetas','Dotación'].includes(p.cat);
-const fotos = p.id === 'buzo-estrella'
+const LIFESTYLE = {Buzos:'c-buzos', Camisetas:'c-camisetas', Gorras:'c-gorras', Mugs:'c-mugs', Termos:'c-termos', Accesorios:'promo-personaliza', Polos:'empresas-dotacion'};
+const fotos = p.id === 'buzo'
   ? [[p.img,0],['../img/recortes/modelo-hombre-buzo.webp',0],['../img/prod-espalda-modelo.webp',1],['../img/detalle-estampado.webp',1],['../img/prod-lifestyle.webp',1]]
-  : [[p.img,0],['../img/' + LIFESTYLE[p.cat] + '.webp',1],['../img/detalle-estampado.webp',1]];
+  : p.sinFoto ? [[p.img,0]]
+  : [[p.img,0],['../img/' + LIFESTYLE[p.cat] + '.webp',1],['../img/' + (p.tecnica === 'DTF' ? 'detalle-estampado' : p.cat === 'Mugs' ? 'trabajo-mugs' : 'kit-marca') + '.webp',1]];
 const fondo = {'t-amarillo':'var(--amarillo)','t-cian':'var(--cian)','t-vino':'var(--vino)','t-azul':'var(--azul)'}[p.tono];
-const plural = ['Mugs','Termos','Llaveros'].includes(p.cat);
-const tipo = {Buzos:'Buzo personalizado', Camisetas:'Camiseta personalizada', 'Dotación':'Polo de dotación con logo', Gorras:'Gorra personalizada', Mugs:'Mug personalizado', Termos:'Termo personalizado', Llaveros:'Llavero personalizado'}[p.cat] || p.cat;
-document.title = p.nombre + ' · ' + tipo + ' · Tránsfer!';
-const descSeo = tipo + ' "' + p.nombre + '": ' + p.sub.toLowerCase() + '. Cámbialo por tu logo, tu foto o tu frase y míralo puesto antes de pedir. Taller en Piedecuesta, envíos a toda Colombia.';
+document.title = p.nombre + ' con tu diseño · ' + pesos(p.precio) + ' · Tránsfer!';
+const descSeo = p.detalle + ' ' + pesos(p.precio) + ' con el estampado incluido. Taller en Piedecuesta, envíos a toda Colombia.';
 document.querySelector('meta[name="description"]').setAttribute('content', descSeo);
 document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
 document.querySelector('meta[property="og:description"]')?.setAttribute('content', descSeo);
 const ld = document.createElement('script'); ld.type = 'application/ld+json';
-ld.textContent = JSON.stringify([{"@context":"https://schema.org","@type":"Product","name":p.nombre,"category":p.cat,"image":p.img,"description":descSeo,"brand":{"@type":"Brand","name":"Tránsfer!"}},
+ld.textContent = JSON.stringify([{"@context":"https://schema.org","@type":"Product","name":p.nombre,"category":p.cat,"image":p.img,"description":descSeo,"sku":p.sku||undefined,"brand":{"@type":"Brand","name":"Tránsfer!"},"offers":{"@type":"Offer","price":p.precio,"priceCurrency":"COP"}},
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"index.html"},{"@type":"ListItem","position":2,"name":"Tienda","item":"tienda.html"},{"@type":"ListItem","position":3,"name":p.cat,"item":"tienda.html#"+p.cat},{"@type":"ListItem","position":4,"name":p.nombre}]}]);
 document.head.appendChild(ld);
 ['nombre','miga-nom'].forEach(x => document.getElementById(x).textContent = p.nombre);
 document.getElementById('cat').textContent = p.cat; document.getElementById('miga-cat').textContent = p.cat; document.getElementById('miga-cat').href = 'tienda.html#' + p.cat;
-document.getElementById('sello-color').textContent = p.color;
-document.getElementById('agregar').dataset.agregar = p.id;
-const PERSO = {Buzos:'buzo', Camisetas:'camiseta', 'Dotación':'camiseta', Gorras:'gorra', Mugs:'mug', Termos:'mug'};
-if (PERSO[p.cat]) document.getElementById('ir-perso').href = 'personaliza.html?producto=' + PERSO[p.cat];
-if (p.id !== 'buzo-estrella') document.getElementById('desc').textContent = p.sub + '. Escoge este diseño o cámbialo por tu logo, tu foto o tu frase: lo ves en el personalizador antes de pedir.';
-if (!PRENDA) { document.getElementById('op-tallas').remove(); document.getElementById('d-tallas').remove(); document.getElementById('detalles').textContent = 'Producto sublimado: el diseño queda dentro del material, con colores vivos que no se pelan.'; }
+const $id = x => document.getElementById(x);
+$id('sellos').innerHTML = [p.tecnica, p.sub, 'Desde una unidad'].map(x => `<span>${x}</span>`).join('');
+$id('desc').textContent = p.detalle + (p.perso ? ' Ponle tu logo, tu foto o tu frase y míralo puesto antes de pedir.' : ' Mándanos tu foto, tu logo o solo la idea y lo diseñamos por ti, sin costo.');
+$id('detalles').innerHTML = [p.colores && p.colores.length > 1 ? '<b>Colores:</b> ' + p.colores.map(c => c[0].toLowerCase()).join(', ') + '. Si quieres otro, pregúntanos.' : '', p.tallas ? '<b>Tallas:</b> S, M, L, XL, XXL y niño. El tamaño máximo del estampado depende de la talla.' : '', p.cat === 'Mugs' ? '<b>Estampado:</b> de asa a asa, en una hoja de 20 × 11 cm.' : '', p.cat === 'Termos' && p.perso ? '<b>Estampado:</b> completo, alrededor del termo.' : '', p.dos ? `<b>Precio:</b> ${pesos(p.precio)} por un lado y ${pesos(p.dos)} por los dos.` : '', p.tecnica === 'DTF' ? '<b>Técnica:</b> DTF, a todo color, en tela clara u oscura.' : '<b>Técnica:</b> sublimación; el diseño queda dentro del material.'].filter(Boolean).join('<br>');
+$id('resp-pago').innerHTML = 'Con el 50 % empezamos a producir y el resto lo pagas antes del envío o al recoger. Pagas en línea con Mercado Pago, por Nequi o Daviplata, o en efectivo en el taller.<br><br>Un pedido pequeño se produce en 1 día hábil y uno de 10 unidades en 2; en diciembre, de 2 a 3. Si no lo tenemos en existencia, lo conseguimos en 3 días.<br><br>Puedes cancelar antes de que empecemos a producir. El cambio de talla solo se hace sin estampar. <a href="legal.html">Ver términos</a>.';
+$id('agregar').dataset.agregar = p.id;
+const irP = $id('ir-perso');
+if (p.perso) irP.href = 'personaliza.html?producto=' + p.perso + '&tipo=' + p.id;
+else { irP.href = '#'; irP.dataset.disenamelo = {portavasos: 'Portavasos', llavero: 'Llavero', lapicero: 'Lapicero', lamina: 'Lámina portarretrato', rompecabezas: 'Rompecabezas', 'reno-navidad': 'Reno de Navidad'}[p.id] || ''; irP.innerHTML = 'Mandar mi foto o mi idea <i>✦</i>'; }
+// Opciones reales de cada producto: color, material, lados y talla
+const boton = (txt, on, extra = '') => `<button type="button" class="${on ? 'on' : ''}" ${extra}>${txt}</button>`;
+if (p.colores && p.colores.length > 1) { document.querySelector('[data-colores]').innerHTML = p.colores.map(([n, h], k) => `<button type="button" class="${k ? '' : 'on'}" style="background:${h}" title="${n}" aria-label="${n}"></button>`).join(''); $id('color-n').textContent = p.colores[0][0]; }
+else if (p.id === 'mug-color') { document.querySelector('[data-colores]').outerHTML = '<p class="nota-color">Dinos qué color de interior y asa quieres al pedir por WhatsApp o en el personalizador.</p>'; }
+else $id('op-color').remove();
+if (p.opciones) document.querySelector('[data-opciones]').innerHTML = p.opciones.map((o, k) => boton(o, !k)).join(''); else $id('op-material').remove();
+if (!p.dos) $id('op-lados').remove();
+if (p.tallas) document.querySelector('[data-tallas]').innerHTML = p.tallas.map(x => boton(x, x === 'M')).join(''); else { $id('op-tallas').remove(); $id('d-tallas').remove(); }
+const cantEl = document.querySelector('[data-cant]');
+function precio() {
+  const dosLados = document.querySelector('[data-lados] .on')?.dataset.dos === '1', n = Math.max(1, +cantEl.value || 1), u = unidad(p, {dosLados, total: n});
+  $id('precio-u').textContent = n > 1 ? `${pesos(u)} c/u · ${pesos(u * n)}` : pesos(u);
+  $id('precio-n').textContent = 'Con el estampado incluido.' + (p.baja ? ' ' + textoBaja(p) + '.' : '') + ' El envío va aparte.';
+}
+document.addEventListener('input', e => { if (e.target === cantEl) precio(); });
+document.querySelectorAll('[data-lados], [data-colores]').forEach(g => g.addEventListener('click', e => setTimeout(() => { precio(); const c = document.querySelector('[data-colores] .on'); if (c) $id('color-n').textContent = c.title; })));
+precio();
 const principal = document.getElementById('principal'), foto = document.getElementById('foto'), minis = document.getElementById('minis');
 principal.style.background = fondo;
 minis.innerHTML = fotos.map(([src, c], i) => `<button class="${i ? '' : 'on'}" data-i="${i}" aria-label="Foto ${i + 1}"><img class="${c ? 'cubre' : ''}" src="${src}" alt=""></button>`).join('');
 function ver(i) { const [src, c] = fotos[i]; foto.classList.add('cambiando'); setTimeout(() => { foto.src = src; foto.className = c ? 'cubre' : ''; }, 200); minis.querySelectorAll('button').forEach((b, k) => b.classList.toggle('on', k === i)); }
 foto.src = fotos[0][0]; foto.alt = p.nombre;
 minis.addEventListener('click', e => { const b = e.target.closest('button'); if (b) ver(+b.dataset.i); });
-document.getElementById('fotos-puesto').innerHTML = (p.cat === 'Buzos' ? ['prod-lifestyle','c-buzos','look-amarillo'] : [LIFESTYLE[p.cat], 'ig-2', 'ig-1']).map((f, i) => `<div class="foto-tinta ${i === 1 ? 'muesca' : ''}"><img src="../img/${f}.webp" alt="" loading="lazy"></div>`).join('');
+document.getElementById('fotos-puesto').innerHTML = (p.cat === 'Buzos' ? ['prod-lifestyle','c-buzos','look-amarillo'] : p.cat === 'Mugs' ? ['c-mugs', 'trabajo-mugs', 'ig-4'] : p.cat === 'Gorras' ? ['c-gorras', 'trabajo-gorras', 'cat-gorras'] : p.cat === 'Termos' ? ['c-termos', 'cat-termos', 'kit-marca'] : p.cat === 'Accesorios' ? ['c-llaveros', 'kit-marca', 'ig-6'] : p.cat === 'Polos' ? ['empresas-dotacion', 'emp-eventos', 'nos-empaque'] : [LIFESTYLE[p.cat], 'ig-2', 'trabajo-camisetas']).map((f, i) => `<div class="foto-tinta ${i === 1 ? 'muesca' : ''}"><img src="../img/${f}.webp" alt="" loading="lazy"></div>`).join('');
 const rel = CATALOGO.filter(x => x.id !== p.id).sort((a, b) => (b.cat === p.cat) - (a.cat === p.cat)).slice(0, 4);
 document.getElementById('relacionados').innerHTML = rel.map((x, i) => tarjeta(x, i)).join('');
 </script>
